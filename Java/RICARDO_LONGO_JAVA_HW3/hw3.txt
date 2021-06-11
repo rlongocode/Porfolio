@@ -1,0 +1,309 @@
+/*
+This is an extnsion of the last assignment, I decided I might as well adapt an already completed UI
+ */
+
+/**
+ *
+ * @author Marc
+ */
+package Hw3;
+
+//importing all the relevant libraries, and then some cuz i dont know which ones i evev
+//need but im scared to delete anything
+import java.util.Vector;
+
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.border.*;
+import javax.swing.*;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
+import javax.swing.UIManager;
+import javax.swing.JTextField;
+import java.util.Collections;
+
+//extend JFrame w/ actionListener to declare buttons and panes and whatnot
+public class hw3 extends JFrame implements ActionListener {
+    private SummableSet sete;
+    private SummableSet sort_list;
+    private JPanel panel;
+    private JTextArea display;
+    private JTextArea results;
+    private JTextField input;
+    private JButton inserte;
+    private JButton minnum;
+    private JButton maxnum;
+    private JButton cleare;
+    private JButton sort_asc;
+    private JButton sort_des;
+    private JButton sume;
+    private int maxi;
+    private int mini;
+    private JPanel card1;
+
+    
+public hw3() {
+    //initialize all the elements of the window
+    this.sete = new SummableSet();
+    this.sort_list = new SummableSet();
+    this.input = new JTextField();
+    this.panel = new JPanel();
+    this.display = new JTextArea();
+    this.results = new JTextArea();
+    this.input = new JTextField();
+    //font customizations
+    this.display.setFont(new Font("Arial Black", Font.BOLD, 20));
+    this.display.setEditable(false);
+    this.results.setFont(new Font("Arial Black", Font.BOLD, 20));
+    this.results.setEditable(false);
+    this.display.setLineWrap(true);
+    this.display.setBackground(Color.getHSBColor(291, 94, 64));
+    //labeling the buttons
+    this.inserte = new JButton("insert element");
+    this.minnum = new JButton("Return min element");
+    this.maxnum = new JButton("Return max number");
+    this.cleare = new JButton("empty set");
+    this.sort_asc = new JButton("Sort ascending");
+    this.sort_des = new JButton("Sort descending");
+    //adding color to really make it pop
+    //also just to explore the different aspects/customization of things
+    this.inserte.setBackground(Color.getHSBColor(360, 100, 80));
+    this.minnum.setBackground(Color.getHSBColor(360, 100, 80));
+    this.maxnum.setBackground(Color.getHSBColor(360, 100, 80));
+    this.cleare.setBackground(Color.getHSBColor(360, 100, 80));
+    this.sort_asc.setBackground(Color.getHSBColor(360, 100, 80));
+    this.sort_des.setBackground(Color.getHSBColor(360, 100, 80));
+    //add actionlistener so it knows what to do when button is pushed
+    this.inserte.addActionListener(this);
+    this.minnum.addActionListener(this);
+    this.maxnum.addActionListener(this);
+    this.cleare.addActionListener(this);
+    this.sort_asc.addActionListener(this);
+    this.sort_des.addActionListener(this);
+    this.setLayout(new GridLayout(1, 3));
+    this.input.setColumns(20);
+    this.input.setText("Delete this text and enter integers here");
+    this.maxi = 0;
+    this.mini = 0;
+    
+    UIManager UI = new UIManager();
+    UI.put("OptionPane.background", Color.red);
+    UI.put("Panel.background",Color.red);
+
+    //add everyhing to the window
+    add(new JScrollPane(this.display));
+    add(new JScrollPane(this.results));
+
+    this.panel.add(this.input);
+    this.panel.add(this.inserte);
+    this.panel.add(this.maxnum);  
+    this.panel.add(this.minnum); 
+    this.panel.add(this.sort_asc);
+    this.panel.add(this.sort_des);
+    this.panel.add(this.cleare);
+    this.panel.setBackground(Color.blue);
+    add(this.panel);
+    setSize(1500,1000);
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    setVisible(true);
+  }
+
+private void operation_check(String operation) {
+    //checking for empty sets
+    if (operation.equals("min") || operation.equals("max") || operation.equals("sort asc")|| operation.equals("sort des")){
+      if (this.sete.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "The set is empty.", "Empty Set Error", JOptionPane.INFORMATION_MESSAGE);
+        
+        return;
+      }
+    }
+    
+    //try statement to parse the action declared by the button pushed
+    try {
+      //if button it to add, add number in text field to the list
+      if (operation.equals("insert")) {
+        String text = input.getText();
+        int the_num = Integer.parseInt(text);
+        this.sete.insert(the_num);
+        //adds to a seperate list that when sorted wont affect the master list
+        this.sort_list.insert(the_num);
+        this.display.setText(this.sete.toString());
+        this.input.setText("");
+      } 
+
+      else if (operation.equals("sort asc")){
+          this.sort_list.upsorter();
+          this.results.setText(this.sort_list.toString());
+      }
+      else if (operation.equals("sort des")){
+          this.sort_list.downsorter();
+          this.results.setText(this.sort_list.toString());
+      }
+      
+      else if (operation.equals("max")) {
+        this.maxi = this.sete.maxvoid();
+        this.results.setText("Max number at time of clicking: " + Integer.toString(this.maxi));
+        }
+      
+      else if (operation.equals("min")) {
+        this.mini = this.sete.minvoid();
+        this.results.setText("Min number at time of clicking: " + Integer.toString(this.mini));
+        }
+    } 
+    //in case no number/something that isnt a number is attempted to enter into the list
+    catch (NumberFormatException exception) {
+      JOptionPane.showMessageDialog(this, "please enter a number", "Not A Number Error", JOptionPane.INFORMATION_MESSAGE);
+    } 
+    catch (Exception exception) {
+      JOptionPane.showMessageDialog(this, "This is an empty set.", "Empty Set Error", JOptionPane.INFORMATION_MESSAGE);
+    } 
+}
+
+//checks the name of the action based on button tag and executes in above function
+public void actionPerformed(ActionEvent event) {
+    if (event.getSource() == this.inserte) {
+      operation_check("insert");
+    } 
+    
+    else if (event.getSource() == this.maxnum) {
+      operation_check("max");
+    } 
+    
+    else if (event.getSource() == this.sort_asc) {
+      operation_check("sort asc");
+    } 
+    
+    else if (event.getSource() == this.sort_des) {
+      operation_check("sort des");
+    } 
+    
+    else if (event.getSource() == this.minnum) {
+      operation_check("min");
+    } 
+    
+    else if (event.getSource() == this.cleare) {
+      this.display.setText("");
+      this.results.setText("");
+      try {
+        this.sete.clear();
+      } 
+      
+      catch (Exception exception) {}
+    } 
+  }
+  
+//Using a vector as the data structure
+//This is the adapted from the last assignment, and new functionality is added
+private class IntSet {
+    public Vector<Integer> vec = new Vector<>();
+    public int maxi;
+    public int mini;
+    
+    private IntSet() {
+    }
+    
+    public void insert(int no) {
+      vec.addElement(no);
+    }
+    
+    public int maxvoid(){
+        return Collections.max(vec);
+    }
+    
+    public int minvoid(){
+        return Collections.min(vec);
+    }
+
+    public void upsorter()
+    {
+        Collections.sort(vec);
+    }
+    
+    public void downsorter()
+    {
+        Collections.sort(vec);
+        Collections.reverse(vec);
+    }
+    
+    //commenting out unnessecary functions
+    /*public boolean delete(int no) throws Exception {
+      if (!search(no))
+        return false; 
+      vec.removeElement(no);
+      
+      return true;
+    }
+    
+    public boolean search(int no) {
+      for(int i = 0; i < vec.size(); i++){
+          if(vec.get(i) == no)
+              return true;
+      }
+      
+      return false;
+    }*/
+    
+    public int getSize() {
+      return vec.size();
+    }
+    
+    public boolean isEmpty() {
+      return (vec.isEmpty());
+    }
+    
+    public void clear() throws Exception {
+      vec.removeAllElements();
+    }
+    
+    public String toString() {
+      return vec.toString();
+    }    
+   
+  }
+ 
+private class SummableSet extends IntSet {
+    
+    private int sum;
+    
+    private SummableSet() {
+      this.sum = 0;
+    }
+    
+    /*public int getSum() {
+      this.sum = 0;
+      getSum(vec);
+      
+      return this.sum;
+    }
+    
+    private void getSum(Vector<Integer> vec) {
+      int numb;
+      if (vec.isEmpty())
+        return; 
+      for(int i = 0; i < vec.size(); i++){
+          numb = vec.get(i);
+          this.sum += numb;
+      }   
+    }*/
+  }
+ 
+public static void main(String[] args) {
+        hw3 epic_program = new hw3();
+        epic_program.setTitle("Super epic program l337 epic win");
+    }
+}

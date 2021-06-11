@@ -1,0 +1,312 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>RicardoProject3.java</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<style type="text/css">
+<!--
+body {color: #000000; background-color: #ffffff; font-family: monospace}
+pre {color: #000000; background-color: #ffffff; font-family: monospace}
+table {color: #000000; background-color: #e9e8e2; font-family: monospace}
+.comment {color: #969696}
+.literal {color: #0000e6}
+.string {color: #ce7b00}
+-->
+</style>
+</head>
+<body>
+<table width="100%"><tr><td align="center">C:\Users\ricar\OneDrive\Documents\NetBeansProjects\RicardoLongoProject2\src\main\java\RicardoProject3.java</td></tr></table>
+<pre>
+  1 <span class="comment">//Ricardo Longo</span>
+  2 <span class="literal">import</span> java.util.Vector;
+  3 
+  4 <span class="literal">import</span> java.awt.*;
+  5 <span class="literal">import</span> java.awt.event.*;
+  6 <span class="literal">import</span> java.awt.BorderLayout;
+  7 <span class="literal">import</span> java.awt.Component;
+  8 <span class="literal">import</span> java.awt.Dimension;
+  9 <span class="literal">import</span> java.awt.event.ActionEvent;
+ 10 <span class="literal">import</span> java.awt.event.ActionListener;
+ 11 <span class="literal">import</span> javax.swing.JButton;
+ 12 <span class="literal">import</span> javax.swing.JFrame;
+ 13 <span class="literal">import</span> javax.swing.JLabel;
+ 14 <span class="literal">import</span> javax.swing.JOptionPane;
+ 15 <span class="literal">import</span> javax.swing.JPanel;
+ 16 <span class="literal">import</span> javax.swing.JScrollPane;
+ 17 <span class="literal">import</span> javax.swing.JTextArea;
+ 18 <span class="literal">import</span> javax.swing.border.*;
+ 19 <span class="literal">import</span> javax.swing.*;
+ 20 <span class="literal">import</span> javax.swing.text.AttributeSet;
+ 21 <span class="literal">import</span> javax.swing.text.SimpleAttributeSet;
+ 22 <span class="literal">import</span> javax.swing.text.StyleConstants;
+ 23 <span class="literal">import</span> javax.swing.text.StyleContext;
+ 24 <span class="literal">import</span> javax.swing.UIManager;
+ 25 <span class="literal">import</span> javax.swing.JTextField;
+ 26 <span class="literal">import</span> java.util.Collections;
+ 27 
+ 28 <span class="comment">//Variable Declaration</span>
+ 29 <span class="literal">public</span> <span class="literal">class</span> RicardoProject3 <span class="literal">extends</span> JFrame <span class="literal">implements</span> ActionListener {
+ 30     <span class="literal">private</span> TheSet sete;
+ 31     <span class="literal">private</span> TheSet sort_list;
+ 32     <span class="literal">private</span> TheSet sort_listb;
+ 33     <span class="literal">private</span> JPanel panel;
+ 34     <span class="literal">private</span> JTextField input;
+ 35     <span class="literal">private</span> JTextArea display;
+ 36     <span class="literal">private</span> JTextArea results;
+ 37     <span class="literal">private</span> JButton inserte;
+ 38     <span class="literal">private</span> JButton minnum;
+ 39     <span class="literal">private</span> JButton maxnum;
+ 40     <span class="literal">private</span> JButton cleare;
+ 41     <span class="literal">private</span> <span class="literal">int</span> maxi;
+ 42     <span class="literal">private</span> <span class="literal">int</span> mini;
+ 43     <span class="literal">private</span> <span class="literal">final</span> JCheckBox sortasc;
+ 44     <span class="literal">private</span> <span class="literal">final</span> JCheckBox sortdes;
+ 45     <span class="literal">private</span> JButton sortpress;
+ 46 
+ 47     
+ 48 <span class="literal">public</span> RicardoProject3() {
+ 49     <span class="comment">//Window Elements Initialize</span>
+ 50     <span class="literal">this</span>.sete = <span class="literal">new</span> TheSet();
+ 51     <span class="literal">this</span>.sort_list = <span class="literal">new</span> TheSet();
+ 52     <span class="literal">this</span>.sort_listb = <span class="literal">new</span> TheSet();
+ 53     <span class="literal">this</span>.input = <span class="literal">new</span> JTextField();
+ 54     <span class="literal">this</span>.panel = <span class="literal">new</span> JPanel();
+ 55     <span class="literal">this</span>.display = <span class="literal">new</span> JTextArea();
+ 56     <span class="literal">this</span>.results = <span class="literal">new</span> JTextArea();
+ 57     <span class="literal">this</span>.input = <span class="literal">new</span> JTextField();
+ 58     <span class="comment">//Stablish Font</span>
+ 59     <span class="literal">this</span>.display.setFont(<span class="literal">new</span> Font(<span class="string">&quot;</span><span class="string">Arial Black</span><span class="string">&quot;</span>, Font.BOLD, 12));
+ 60     <span class="literal">this</span>.display.setEditable(<span class="literal">false</span>);
+ 61     <span class="literal">this</span>.results.setFont(<span class="literal">new</span> Font(<span class="string">&quot;</span><span class="string">Arial Black</span><span class="string">&quot;</span>, Font.BOLD, 12));
+ 62     <span class="literal">this</span>.results.setEditable(<span class="literal">false</span>);
+ 63     <span class="literal">this</span>.display.setLineWrap(<span class="literal">true</span>);
+ 64     <span class="comment">//Buttons</span>
+ 65     <span class="literal">this</span>.inserte = <span class="literal">new</span> JButton(<span class="string">&quot;</span><span class="string">Insert</span><span class="string">&quot;</span>);
+ 66     <span class="literal">this</span>.minnum = <span class="literal">new</span> JButton(<span class="string">&quot;</span><span class="string">Return Minimun</span><span class="string">&quot;</span>);
+ 67     <span class="literal">this</span>.maxnum = <span class="literal">new</span> JButton(<span class="string">&quot;</span><span class="string">Return Maximun</span><span class="string">&quot;</span>);
+ 68     <span class="literal">this</span>.cleare = <span class="literal">new</span> JButton(<span class="string">&quot;</span><span class="string">Empty</span><span class="string">&quot;</span>);
+ 69     <span class="literal">this</span>.sortpress = <span class="literal">new</span> JButton(<span class="string">&quot;</span><span class="string">Sort</span><span class="string">&quot;</span>);
+ 70     
+ 71     <span class="comment">//Checkboxes</span>
+ 72     <span class="literal">this</span>.sortasc = <span class="literal">new</span> JCheckBox(<span class="string">&quot;</span><span class="string">Sort Ascending</span><span class="string">&quot;</span>);
+ 73     <span class="literal">this</span>.sortasc.setSelected(<span class="literal">false</span>);
+ 74     <span class="literal">this</span>.sortdes = <span class="literal">new</span> JCheckBox(<span class="string">&quot;</span><span class="string">Sort Decending</span><span class="string">&quot;</span>);
+ 75     <span class="literal">this</span>.sortdes.setSelected(<span class="literal">false</span>);
+ 76     
+ 77     <span class="comment">//ActionListeners for Buttons</span>
+ 78     <span class="literal">this</span>.inserte.addActionListener(<span class="literal">this</span>);
+ 79     <span class="literal">this</span>.minnum.addActionListener(<span class="literal">this</span>);
+ 80     <span class="literal">this</span>.maxnum.addActionListener(<span class="literal">this</span>);
+ 81     <span class="literal">this</span>.cleare.addActionListener(<span class="literal">this</span>);
+ 82     <span class="literal">this</span>.setLayout(<span class="literal">new</span> GridLayout(1, 3));
+ 83     <span class="literal">this</span>.input.setColumns(20);
+ 84     <span class="literal">this</span>.input.setText(<span class="string">&quot;&quot;</span>);
+ 85     <span class="literal">this</span>.maxi = 0;
+ 86     <span class="literal">this</span>.mini = 0;
+ 87     <span class="literal">this</span>.sortpress.addActionListener(<span class="literal">this</span>);
+ 88     
+ 89     UIManager UI = <span class="literal">new</span> UIManager();
+ 90 
+ 91     <span class="comment">//Adding UI to Window</span>
+ 92     <span class="literal">this</span>.panel.add(<span class="literal">this</span>.input);
+ 93     <span class="literal">this</span>.panel.add(<span class="literal">this</span>.inserte);
+ 94     <span class="literal">this</span>.panel.add(<span class="literal">this</span>.maxnum);  
+ 95     <span class="literal">this</span>.panel.add(<span class="literal">this</span>.minnum); 
+ 96     <span class="literal">this</span>.panel.add(<span class="literal">this</span>.cleare);
+ 97     <span class="literal">this</span>.panel.add(<span class="literal">this</span>.sortpress);
+ 98     <span class="literal">this</span>.panel.add(<span class="literal">this</span>.sortasc);
+ 99     <span class="literal">this</span>.panel.add(<span class="literal">this</span>.sortdes);
+100     add(<span class="literal">this</span>.panel);
+101     add(<span class="literal">new</span> JScrollPane(<span class="literal">this</span>.display));
+102     add(<span class="literal">new</span> JScrollPane(<span class="literal">this</span>.results));
+103     
+104 
+105     <span class="comment">//Size of Window plus Close Frame.</span>
+106     setSize(750,500);
+107     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+108     setVisible(<span class="literal">true</span>);
+109     
+110     
+111         
+112   }
+113 
+114 <span class="comment">//Initialization code:</span>
+115 
+116 <span class="literal">private</span> <span class="literal">void</span> operation_check(String operation) {
+117     <span class="comment">//General Case For Empty Sets</span>
+118     <span class="literal">if</span> (operation.equals(<span class="string">&quot;</span><span class="string">min</span><span class="string">&quot;</span>) || operation.equals(<span class="string">&quot;</span><span class="string">max</span><span class="string">&quot;</span>) || operation.equals(<span class="string">&quot;</span><span class="string">sortasc</span><span class="string">&quot;</span>)|| operation.equals(<span class="string">&quot;</span><span class="string">sortdes</span><span class="string">&quot;</span>)){
+119       <span class="literal">if</span> (<span class="literal">this</span>.sete.isEmpty()) {
+120         JOptionPane.showMessageDialog(<span class="literal">this</span>, <span class="string">&quot;</span><span class="string">The set is empty.</span><span class="string">&quot;</span>, <span class="string">&quot;</span><span class="string">Empty Set Error</span><span class="string">&quot;</span>, JOptionPane.INFORMATION_MESSAGE);
+121         
+122         <span class="literal">return</span>;
+123       }
+124     }
+125     
+126     <span class="comment">//Inserts Number to list, made a sencond list for Asceding and Decending sort with checkboxes</span>
+127     <span class="literal">try</span> {
+128      
+129       <span class="literal">if</span> (operation.equals(<span class="string">&quot;</span><span class="string">insert</span><span class="string">&quot;</span>)) {
+130         String text = input.getText();
+131         <span class="literal">int</span> the_num = Integer.parseInt(text);
+132         <span class="literal">this</span>.sete.insert(the_num);
+133         
+134         <span class="literal">this</span>.sort_list.insert(the_num);
+135         <span class="literal">this</span>.sort_listb.insert(the_num);
+136         <span class="literal">this</span>.display.setText(<span class="literal">this</span>.sete.toString());
+137         <span class="literal">this</span>.input.setText(<span class="string">&quot;&quot;</span>);
+138       } 
+139 
+140       <span class="literal">else</span> <span class="literal">if</span> (operation.equals(<span class="string">&quot;</span><span class="string">sortasc</span><span class="string">&quot;</span>)){
+141           <span class="literal">this</span>.sort_list.upsorter();
+142           <span class="literal">this</span>.results.setText(<span class="literal">this</span>.sort_list.toString());
+143       }
+144       
+145       <span class="literal">else</span> <span class="literal">if</span> (operation.equals(<span class="string">&quot;</span><span class="string">sortdes</span><span class="string">&quot;</span>)){
+146           <span class="literal">this</span>.sort_list.downsorter();
+147           <span class="literal">this</span>.results.setText(<span class="literal">this</span>.sort_list.toString());
+148       }
+149       
+150       <span class="literal">else</span> <span class="literal">if</span> (operation.equals(<span class="string">&quot;</span><span class="string">sortascdes</span><span class="string">&quot;</span>)){
+151           <span class="literal">this</span>.sort_list.upsorter();
+152           <span class="literal">this</span>.sort_listb.equals(<span class="literal">this</span>.sort_list);
+153           <span class="literal">this</span>.sort_listb.upsorter();
+154           <span class="literal">this</span>.sort_list.downsorter();
+155           <span class="literal">this</span>.results.setText(<span class="literal">this</span>.sort_listb.toString() + <span class="literal">this</span>.sort_list.toString());
+156       }
+157       
+158       <span class="literal">else</span> <span class="literal">if</span> (operation.equals(<span class="string">&quot;</span><span class="string">max</span><span class="string">&quot;</span>)) {
+159         <span class="literal">this</span>.maxi = <span class="literal">this</span>.sete.maxvoid();
+160         <span class="literal">this</span>.results.setText(<span class="string">&quot;</span><span class="string">Max number: </span><span class="string">&quot;</span> + Integer.toString(<span class="literal">this</span>.maxi));
+161         }
+162       
+163       <span class="literal">else</span> <span class="literal">if</span> (operation.equals(<span class="string">&quot;</span><span class="string">min</span><span class="string">&quot;</span>)) {
+164         <span class="literal">this</span>.mini = <span class="literal">this</span>.sete.minvoid();
+165         <span class="literal">this</span>.results.setText(<span class="string">&quot;</span><span class="string">Min number: </span><span class="string">&quot;</span> + Integer.toString(<span class="literal">this</span>.mini));
+166         }
+167     } 
+168     <span class="comment">//Exception for No Number or No Input</span>
+169     <span class="literal">catch</span> (NumberFormatException exception) {
+170       JOptionPane.showMessageDialog(<span class="literal">this</span>, <span class="string">&quot;</span><span class="string">Enter a number</span><span class="string">&quot;</span>, <span class="string">&quot;</span><span class="string">Error: Not A Number</span><span class="string">&quot;</span>, JOptionPane.INFORMATION_MESSAGE);
+171     } 
+172     <span class="literal">catch</span> (Exception exception) {
+173       JOptionPane.showMessageDialog(<span class="literal">this</span>, <span class="string">&quot;</span><span class="string">Empty, please add numbers.</span><span class="string">&quot;</span>, <span class="string">&quot;</span><span class="string">Error: Empty Set</span><span class="string">&quot;</span>, JOptionPane.INFORMATION_MESSAGE);
+174     } 
+175 }
+176 
+177 <span class="comment">//Checks it works properly</span>
+178 <span class="literal">public</span> <span class="literal">void</span> actionPerformed(ActionEvent event) {
+179     <span class="literal">if</span> (event.getSource() == <span class="literal">this</span>.inserte) {
+180       operation_check(<span class="string">&quot;</span><span class="string">insert</span><span class="string">&quot;</span>);
+181     } 
+182     
+183     <span class="literal">else</span> <span class="literal">if</span> (event.getSource() == <span class="literal">this</span>.maxnum) {
+184       operation_check(<span class="string">&quot;</span><span class="string">max</span><span class="string">&quot;</span>);
+185     } 
+186     
+187     <span class="literal">else</span> <span class="literal">if</span> (event.getSource() == <span class="literal">this</span>.sortasc) {
+188       operation_check(<span class="string">&quot;</span><span class="string">sortasc</span><span class="string">&quot;</span>);
+189     } 
+190     
+191     <span class="literal">else</span> <span class="literal">if</span> (event.getSource() == <span class="literal">this</span>.sortdes) {
+192       operation_check(<span class="string">&quot;</span><span class="string">sortdes</span><span class="string">&quot;</span>);
+193     } 
+194     
+195     <span class="literal">else</span> <span class="literal">if</span> (event.getSource() == <span class="literal">this</span>.minnum) {
+196       operation_check(<span class="string">&quot;</span><span class="string">min</span><span class="string">&quot;</span>);
+197     } 
+198     
+199     <span class="literal">else</span> <span class="literal">if</span> (event.getSource() == <span class="literal">this</span>.sortpress) {
+200        <span class="literal">if</span> (<span class="literal">this</span>.sortasc.isSelected()) {
+201                 operation_check(<span class="string">&quot;</span><span class="string">sortasc</span><span class="string">&quot;</span>);
+202             }
+203        <span class="literal">if</span> (<span class="literal">this</span>.sortdes.isSelected()) {
+204                 operation_check(<span class="string">&quot;</span><span class="string">sortdes</span><span class="string">&quot;</span>);
+205             }
+206        <span class="literal">if</span> (<span class="literal">this</span>.sortasc.isSelected() &amp;&amp; <span class="literal">this</span>.sortdes.isSelected()) {
+207                 operation_check(<span class="string">&quot;</span><span class="string">sortascdes</span><span class="string">&quot;</span>);
+208             }
+209     } 
+210     
+211     <span class="literal">else</span> <span class="literal">if</span> (event.getSource() == <span class="literal">this</span>.cleare) {
+212       
+213       <span class="literal">this</span>.display.setText(<span class="string">&quot;&quot;</span>);
+214       <span class="literal">this</span>.results.setText(<span class="string">&quot;&quot;</span>);
+215       <span class="literal">this</span>.sort_list.equals(<span class="string">&quot;&quot;</span>);
+216       <span class="literal">this</span>.sort_listb.equals(<span class="string">&quot;&quot;</span>);
+217 
+218       <span class="literal">try</span> {
+219         <span class="literal">this</span>.sete.clear();
+220         <span class="literal">this</span>.sort_list.clear();
+221         <span class="literal">this</span>.sort_listb.clear();
+222       } 
+223 
+224       <span class="literal">catch</span> (Exception exception) {}
+225     } 
+226   }
+227   
+228 <span class="comment">//Using Vectors</span>
+229 <span class="literal">private</span> <span class="literal">class</span> IntSet {
+230     <span class="literal">public</span> Vector&lt;Integer&gt; vec = <span class="literal">new</span> Vector&lt;&gt;();
+231     <span class="literal">public</span> <span class="literal">int</span> maxi;
+232     <span class="literal">public</span> <span class="literal">int</span> mini;
+233     
+234     <span class="literal">private</span> IntSet() {
+235     }
+236     
+237     <span class="literal">public</span> <span class="literal">void</span> insert(<span class="literal">int</span> no) {
+238       vec.addElement(no);
+239     }
+240     
+241     <span class="literal">public</span> <span class="literal">int</span> maxvoid(){
+242         <span class="literal">return</span> Collections.max(vec);
+243     }
+244     
+245     <span class="literal">public</span> <span class="literal">int</span> minvoid(){
+246         <span class="literal">return</span> Collections.min(vec);
+247     }
+248 
+249     <span class="literal">public</span> <span class="literal">void</span> upsorter()
+250     {
+251         Collections.sort(vec);
+252     }
+253     
+254     <span class="literal">public</span> <span class="literal">void</span> downsorter()
+255     {
+256         Collections.sort(vec);
+257         Collections.reverse(vec);
+258     }
+259     
+260     <span class="literal">public</span> <span class="literal">int</span> getSize() {
+261       <span class="literal">return</span> vec.size();
+262     }
+263     
+264     <span class="literal">public</span> <span class="literal">boolean</span> isEmpty() {
+265       <span class="literal">return</span> (vec.isEmpty());
+266     }
+267     
+268     <span class="literal">public</span> <span class="literal">void</span> clear() <span class="literal">throws</span> Exception {
+269       vec.removeAllElements();
+270     }
+271     
+272     <span class="literal">public</span> String toString() {
+273       <span class="literal">return</span> vec.toString();
+274     }    
+275    
+276   }
+277  
+278 <span class="literal">private</span> <span class="literal">class</span> TheSet <span class="literal">extends</span> IntSet {
+279     
+280     <span class="literal">private</span> <span class="literal">int</span> sum;
+281     
+282     <span class="literal">private</span> TheSet() {
+283       <span class="literal">this</span>.sum = 0;
+284     }
+285   }
+286  
+287 <span class="literal">public</span> <span class="literal">static</span> <span class="literal">void</span> main(String[] args) {
+288         RicardoProject3 ins = <span class="literal">new</span> RicardoProject3();
+289     }
+290 }
+291 
+</pre></body>
+</html>

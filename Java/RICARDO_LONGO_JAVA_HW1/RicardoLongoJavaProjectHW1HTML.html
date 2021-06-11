@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>RicardoJavaProgram1.java</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<style type="text/css">
+<!--
+body {color: #000000; background-color: #ffffff; font-family: monospace}
+pre {color: #000000; background-color: #ffffff; font-family: monospace}
+table {color: #000000; background-color: #e9e8e2; font-family: monospace}
+.ST0 {font-family: monospace; font-weight: bold}
+.ST3 {color: #009900}
+.comment {color: #969696}
+.ST1 {font-family: monospace; font-weight: bold; font-style: italic}
+.ST2 {color: #009900; font-family: monospace; font-style: italic}
+.literal {color: #0000e6}
+.ST4 {color: #ce7b00; font-family: monospace; font-weight: bold}
+.string {color: #ce7b00}
+-->
+</style>
+</head>
+<body>
+<table width="100%"><tr><td align="center">C:\Users\ricar\OneDrive\Escritorio\RicardoJavaProgram1.java</td></tr></table>
+<pre>
+ 1 
+ 2 <span class="literal">import</span> java.util.Random;
+ 3 
+ 4 <span class="literal">public</span> <span class="literal">class</span> <span class="ST0">RicardoJavaProgram1</span> {
+ 5 
+ 6      <span class="literal">public</span> <span class="literal">static</span> <span class="literal">void</span> <span class="ST1">main</span>(String[] args) {
+ 7         
+ 8         <span class="literal">int</span> array[] = <span class="literal">new</span> <span class="literal">int</span>[10];      
+ 9         Random rand = <span class="literal">new</span> Random();
+10         
+11         System.<span class="ST2">out</span>.println(<span class="string">&quot;</span><span class="string">Unsorted Array:</span><span class="string">&quot;</span>);
+12 
+13         <span class="literal">for</span> (<span class="literal">int</span> i = 0; i &lt; array.<span class="ST3">length</span>; i++)
+14         {
+15                 array[i] = rand.nextInt(100);
+16                 System.<span class="ST2">out</span>.print(array[i] + <span class="string">&quot;</span> <span class="string">&quot;</span>);
+17         }
+18         
+19         System.<span class="ST2">out</span>.println(<span class="string">&quot;</span><span class="ST4">\n</span><span class="string">&quot;</span>);
+20 
+21         <span class="comment">/* Sort */</span>
+22         <span class="literal">for</span>(<span class="literal">int</span> x = 0; x &lt; array.<span class="ST3">length</span> - 1; x++)
+23                 <span class="literal">for</span>( <span class="literal">int</span> y = 0; y &lt; array.<span class="ST3">length</span> - x - 1; y++)
+24                         <span class="literal">if</span>(array[y] &gt; array[y + 1])
+25                         {
+26                                 <span class="literal">int</span> temp = array[y];
+27                                 array[y] = array[y + 1];
+28                                 array[y + 1] = temp;
+29                         }
+30 
+31         System.<span class="ST2">out</span>.println(<span class="string">&quot;</span><span class="string">Sorted Array:</span><span class="string">&quot;</span>);
+32         <span class="literal">for</span>(<span class="literal">int</span> e = 0; e &lt; array.<span class="ST3">length</span>; e++)
+33                 System.<span class="ST2">out</span>.print(array[e] + <span class="string">&quot;</span> <span class="string">&quot;</span>);
+34     }
+35 }
+36 
+</pre></body>
+</html>

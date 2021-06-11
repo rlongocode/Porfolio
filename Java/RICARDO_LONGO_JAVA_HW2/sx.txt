@@ -1,0 +1,71 @@
+jr69's Bijin Presets - Female 2
+
+Skin tone: 3rd option
+skin type: 04
+Hair color: 6th option (Black)
+Eyes: 17
+Eye color: 1st option (Dark Brown)
+Eyebrows:06
+Eyebrow color:1st option (Black)
+
+Nose
+04
+
+Mouth
+09
+
+Jaw
+03
+
+Ears
+16
+
+Cyberware
+off
+
+Facial scars
+off
+
+Facial tattoos
+10
+
+Piercings
+02
+
+Piercing color
+3rd option (Silver)
+
+Teeth
+00
+
+Eye makeup
+02
+
+Lip makeup
+off
+
+Cheek makeup
+05
+
+Cheek makeup color
+2nd option (Pink)
+
+Blemishes
+03
+
+Blemish Colour
+1st option
+
+Chest
+Default
+
+Nipples
+02
+
+Body tattoos
+04
+
+Body scars
+off
+
+
