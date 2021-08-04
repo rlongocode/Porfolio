@@ -1,0 +1,684 @@
+  1 //EZ: GOOD!  See below for comments.
+  2 //EZ: 27/30
+  3 #include <iostream>
+  4 #include <iomanip>
+  5 #include <vector>
+  6 #include <assert.h>
+  7 #include "TreeType.h"
+  8 using namespace std;
+  9
+ 10
+ 11
+ 12 ///////////////////
+ 13 // Public Member functions::
+ 14 ///////////////////
+ 15 template<class ItemType>
+ 16 TreeType<ItemType>::TreeType()
+ 17 {
+ 18   root = NULL;
+ 19 }
+ 20
+ 21
+ 22 //Initialize the tree (binary search tree) with items given in the
+ 23 // array (length of the array is passed as "len"
+ 24 template <class ItemType>
+ 25 TreeType<ItemType>::TreeType (ItemType items[], int len)
+ 26 {
+ 27
+ 28    //sort the array (using bubble sort or selection sort)
+ 29
+ 30    // You should consider calling a recursive function to
+ 31    //    create a balanced BST tree
+ 32
+ 33 }
+ 34
+ 35
+ 36
+ 37 // Calls recursive function DestroySubTree to destroy the tree.
+ 38 template<class ItemType>
+ 39 TreeType<ItemType>::~TreeType()
+ 40 {
+ 41   DestroySubTree(root);
+ 42 }
+ 43
+ 44
+ 45 template<class ItemType>
+ 46 void TreeType<ItemType>::MakeEmpty()
+ 47 {
+ 48   DestroySubTree(root);
+ 49   //root = NULL;
+ 50 }
+ 51
+ 52
+ 53 // Calls recursive function CopyTree to copy originalTree into root.
+ 54 template<class ItemType>
+ 55 TreeType<ItemType>::TreeType(const TreeType& originalTree)
+ 56 {
+ 57   CopyTree(root, originalTree.root);
+ 58 }
+ 59
+ 60 // Calls recursive function CopyTree to copy originalTree
+ 61 // into root.
+ 62 template<class ItemType>
+ 63 void TreeType<ItemType>::operator= (const TreeType& originalTree)
+ 64 {
+ 65   if (&originalTree == this)
+ 66     return;             // Ignore assigning self to self
+ 67   DestroySubTree(root);      // Deallocate existing tree nodes
+ 68   CopyTree(root, originalTree.root);
+ 69
+ 70 }
+ 71
+ 72 // Returns true if there is no room for another item
+ 73 //  on the free store; false otherwise.
+ 74 template<class ItemType>
+ 75 bool TreeType<ItemType>::IsFull() const
+ 76 {
+ 77   TreeNode* location;
+ 78   try
+ 79   {
+ 80     location = new TreeNode;
+ 81     delete location;
+ 82     return false;
+ 83   }
+ 84   catch(std::bad_alloc exception)
+ 85   {
+ 86     return true;
+ 87   }
+ 88 }
+ 89
+ 90 // Returns true if the tree is empty; false otherwise.
+ 91 template<class ItemType>
+ 92 bool TreeType<ItemType>::IsEmpty() const
+ 93 {
+ 94   return root == NULL;
+ 95 }
+ 96
+ 97
+ 98 // Calls recursive function CountNodes to count the
+ 99 // nodes in the tree.
+100 template<class ItemType>
+101 int TreeType<ItemType>::GetLength() const
+102 {
+103   return CountNodesInSubTree(root);
+104 }
+105
+106 //Return the height of the tree
+107 template<class ItemType>
+108 int TreeType<ItemType>::Height() const
+109 {
+110     return (GetHeightSubTree(root));
+111 }
+112
+113
+114 // Calls recursive function Retrieve to search the tree for item.
+115 template<class ItemType>
+116 ItemType TreeType<ItemType>::GetItem(ItemType item, bool& found) const
+117 {
+118   RetrieveInSubTree(root, item, found);
+119   return item;
+120 }
+121
+122
+123
+124 // Calls recursive function Insert to insert item into tree.
+125 template<class ItemType>
+126 void TreeType<ItemType>::PutItem(ItemType item)
+127 {
+128   InsertInSubTree(root, item);
+129 }
+130
+131
+132 // Calls recursive function Delete to delete item from tree.
+133 template<class ItemType>
+134 void TreeType<ItemType>::DeleteItem(ItemType item)
+135 {
+136   DeleteInSubTree(root, item);
+137 }
+138
+139
+140
+141 // Calls recursive function PrintTree to print items in the tree.
+142 template<class ItemType>
+143 void TreeType<ItemType>::Print(ostream& outFile) const
+144 {
+145   PrintTree(root, outFile);
+146 }
+147
+148
+149 // Iterator: inorder, preorder, postorder traversal of the tree nodes
+150 template<class ItemType>
+151 void TreeType<ItemType>::ResetTree(OrderType order)
+152 // Calls function to create a queue of the tree elements in
+153 // the desired order.
+154 {
+155   switch (order)
+156   {
+157     case PRE_ORDER : PreOrder(root, preQue);
+158                      break;
+159     case IN_ORDER  : InOrder(root, inQue);
+160                      break;
+161     case POST_ORDER: PostOrder(root, postQue);
+162                      break;
+163   }
+164 }
+165
+166
+167
+168 // Returns the next item in the desired order.
+169 // Post: For the desired order, item is the next item in the queue.
+170 //       If item is the last one in the queue, finished is true;
+171 //       otherwise finished is false.
+172 template<class ItemType>
+173 ItemType TreeType<ItemType>::GetNextItem(OrderType order, bool& finished)
+174 {
+175   finished = false;
+176   ItemType item;
+177   switch (order)
+178   {
+179     case PRE_ORDER  : item = preQue.front();
+180                       preQue.pop();
+181                       if (preQue.empty())
+182                         finished = true;
+183                       break;
+184     case IN_ORDER   : item = inQue.front();
+185                       inQue.pop();
+186                       if (inQue.empty())
+187                         finished = true;
+188                       break;
+189     case  POST_ORDER: item = postQue.front();
+190                       postQue.pop();
+191                       if (postQue.empty())
+192                         finished = true;
+193                       break;
+194   }
+195   return item;
+196 }
+197
+198 ///////////////////////////////////
+199 // Private member functions: they are static member functions that are called by public member functions to help
+200 //  out certain tasks. Some and most of them are recursive functions.
+201 //  Recursive ideas:
+202 //   it performs the operation on a BST tree by recursively on a sub-tree
+203 //    so the root of the tree or subtree is passed by parameter!
+204 //////////////////////////////
+205
+206
+207 // Post: tree pointer is set to NULL;
+208 //       all nodes in the tree rooted at "tree" have been deallocated.
+209 template<class ItemType>
+210 void TreeType<ItemType>::DestroySubTree(TreeNode* & subTreeRoot)
+211 {
+212   if (subTreeRoot != NULL)
+213   {
+214     DestroySubTree(subTreeRoot->left);
+215     DestroySubTree(subTreeRoot->right);
+216
+217     delete subTreeRoot;
+218
+219     subTreeRoot = NULL;
+220
+221   }
+222 }
+223
+224 // Pre: originalTree is the address of the root node for a tree
+225 // Post: copy is the root of a tree that is a duplicate of tree rooted at originalTree
+226 template<class ItemType>
+227 void TreeType<ItemType>::CopySubTree(TreeNode* & copyTreeRoot, const TreeNode* originalTreeRoot)
+228 {
+229   if (originalTreeRoot == NULL)
+230     copyTreeRoot = NULL;
+231   else
+232   {
+233     copyTreeRoot = new TreeNode;
+234     copyTreeRoot->info = originalTreeRoot->info;
+235
+236     CopySubTree(copyTreeRoot->left, originalTreeRoot->left);
+237     CopySubTree(copyTreeRoot->right, originalTreeRoot->right);
+238   }
+239 }
+240
+241
+242
+243
+244 // Post: returns the total number of nodes in the tree that rooted at "tree"
+245 template<class ItemType>
+246 int TreeType<ItemType>::CountNodesInSubTree(TreeNode* subTreeRoot)
+247 {
+248   if (subTreeRoot == NULL)
+249     return 0;
+250   else
+251     return CountNodesInSubTree(subTreeRoot->left) + CountNodesInSubTree(subTreeRoot->right) + 1;
+252 }
+253
+254
+255
+256 // Sets data to the info member of the right-most node in tree.
+257 // i.e., the largest item
+258 template<class ItemType>
+259 void TreeType<ItemType>::GetLargestInSubTree(TreeNode* subTreeRoot, ItemType& data)
+260 {
+261   while (subTreeRoot->right != NULL)
+262   {
+263     subTreeRoot = subTreeRoot->right;
+264   }
+265   data = subTreeRoot->info;
+266 }
+267
+268  template <class ItemType>
+269  void TreeType<ItemType>::GetSmallest(ItemType& smallest)
+270  {
+271          GetSmallestInSubTree(root, smallest);
+272  }
+273
+274  template <class ItemType>
+275  void TreeType<ItemType>::GetSmallestInSubTree(TreeNode* subTreeRoot, ItemType& smallest)
+276  {
+277  /*
+278         while (subTreeRoot -> left != NULL)
+279         {
+280                  subTreeRoot = subTreeRoot -> left;
+281         }
+282
+283          smallest = subTreeRoot -> info;
+284
+285  */
+286          if(subTreeRoot -> left == NULL)
+287          {
+288                  smallest = subTreeRoot -> info;
+289          }
+290          else
+291                  GetSmallestInSubTree(subTreeRoot->left, smallest);
+292  //
+293  }
+294
+295
+296 //return the height of the tree given by the rootNode
+297 // height of a tree is defined to be the deepest level of the tree
+298 template<class ItemType>
+299 int TreeType<ItemType>::GetHeightSubTree (TreeNode * subTreeRoot)
+300 {
+301    if (subTreeRoot==NULL)
+302         return 0;
+303    else {
+304         int left = GetHeightSubTree (subTreeRoot->left);
+305         int right = GetHeightSubTree (subTreeRoot->right);
+306         if (left<=right)
+307                 return right+1;
+308         else
+309                 return left+1;
+310    }
+311 }
+312
+313
+314
+315 // Recursively searches tree for item.
+316 // Post: If there is an element someItem whose key matches item's,
+317 //       found is true and item is set to a copy of someItem;
+318 //       otherwise found is false and item is unchanged.
+319 template<class ItemType>
+320 void TreeType<ItemType>::RetrieveInSubTree(TreeNode* subTreeRoot, ItemType& item, bool& found)
+321 {
+322    if (subTreeRoot == NULL)
+323     found = false;                     // item is not found.
+324    else if (item < subTreeRoot->info)
+325     RetrieveInSubTree(subTreeRoot->left, item, found); // Search left subtree.
+326    else if (item > subTreeRoot->info)
+327     RetrieveInSubTree(subTreeRoot->right, item, found);// Search right subtree.
+328    else
+329    {
+330       item = subTreeRoot->info;                 // item is found.
+331       found = true;
+332    }
+333 }
+334
+335 // Inserts item into tree rooted at @param subTreeRoot
+336 // Post:  item is in tree; search property is maintained.
+337 template<class ItemType>
+338 void TreeType<ItemType>::InsertInSubTree(TreeNode* & subTreeRoot, ItemType item)
+339 {
+340   if (subTreeRoot == NULL)
+341   {// Insertion place found.
+342     subTreeRoot = new TreeNode;
+343     subTreeRoot->right = NULL;
+344     subTreeRoot->left = NULL;
+345
+346     subTreeRoot->info = item;
+347   }
+348   else if (item < subTreeRoot->info)
+349     InsertInSubTree(subTreeRoot->left, item);    // Insert in left subtree.
+350   else
+351     InsertInSubTree(subTreeRoot->right, item);   // Insert in right subtree.
+352 }
+353
+354
+355 // Deletes item from a tree rooted at @param subTreeRoot
+356 // Post:  item is not in tree.
+357 template<class ItemType>
+358 void TreeType<ItemType>::DeleteInSubTree(TreeNode* & subTreeRoot, ItemType item)
+359 {
+360   if (item < subTreeRoot->info)
+361     DeleteInSubTree(subTreeRoot->left, item);   // Delete item from left subtree.
+362   else if (item > subTreeRoot->info)
+363     DeleteInSubTree(subTreeRoot->right, item);  // Delete item from right subtree.
+364   else // item==subTreeRoot->info
+365     DeleteNode(subTreeRoot);           // delete the node subTreeRoot
+366 }
+367
+368
+369
+370
+371 // Deletes the node pointed to by node.
+372 // Post: The user's data in the node pointed to by node is no
+373 //       longer in the tree.  If node is a leaf node or has only one
+374 //       non-NULL child pointer the node pointed to by node is
+375 //       deleted, and node is updated to point to the non-NULL child,
+376 //       otherwise, the user's data in node is replaced by its
+377 //       logical predecessor and the predecessor's node is deleted.
+378 template<class ItemType>
+379 void TreeType<ItemType>::DeleteNode(TreeNode* & node)
+380 {
+381   ItemType data;
+382   TreeNode* tempPtr;
+383   tempPtr = node;
+384   if (node->left == NULL)
+385   { //If the node has no left child
+386     node = node->right;
+387     delete tempPtr;
+388   }
+389   else if (node->right == NULL)
+390   { //if the node has no right child
+391     node = node->left;
+392     delete tempPtr;
+393   }
+394   else
+395   { //The node has left and right children
+396    // GetLargestInSubTree(node->left, data);
+397    // node->info = data;        //store the predecessor's node's info in node ...
+398    // DeleteInSubTree(node->left, data);  // Delete data from the left tree... (which is a leaf node).
+399
+400
+401     GetSmallestInSubTree(node->right, data);
+402     node -> info = data;
+403     DeleteInSubTree(node->right, data);
+404
+405     //Can you improve performance by doing the following instead?
+406     //  1. Call a function GetRemoveLargest() to return the largest ItemType data stored in
+407     //   the subtree, and remove that node.
+408     //
+409     //    ItemType GetRemoveLargest (TreeNode * & rootNode)
+410     //
+411     //  2.Copy the above returned ItemType data info to node->info
+412   }
+413 }
+414
+415
+416
+417 template<class ItemType>
+418 void TreeType<ItemType>::PreOrder(TreeNode* subTreeRoot, queue<ItemType> & preQue)
+419 // Post: preQue contains the tree items in preorder.
+420 {
+421   if (subTreeRoot != NULL)
+422   {
+423     preQue.push(subTreeRoot->info);
+424     PreOrder(subTreeRoot->left, preQue);
+425     PreOrder(subTreeRoot->right, preQue);
+426   }
+427 }
+428
+429
+430 template<class ItemType>
+431 void TreeType<ItemType>::InOrder(TreeNode* subTreeRoot, queue<ItemType> & inQue)
+432 // Post: inQue contains the tree items in inorder.
+433 {
+434   if (subTreeRoot != NULL)
+435   {
+436     InOrder(subTreeRoot->left, inQue);
+437     inQue.push(subTreeRoot->info);
+438     InOrder(subTreeRoot->right, inQue);
+439   }
+440 }
+441
+442
+443 // Post: postQue contains the tree items in postorder.
+444 template<class ItemType>
+445 void TreeType<ItemType>::PostOrder(TreeNode* subTreeRoot, queue<ItemType> & postQue)
+446 {
+447   if (subTreeRoot != NULL)
+448   {
+449     PostOrder(subTreeRoot->left, postQue);
+450     PostOrder(subTreeRoot->right, postQue);
+451     postQue.push(subTreeRoot->info);
+452   }
+453 }
+454
+455
+456 // Prints info member of items in tree in sorted order on outFile.
+457 template<class ItemType>
+458 void TreeType<ItemType>::PrintTree(TreeNode* subTreeRoot, ostream& outFile)
+459 {
+460   if (subTreeRoot != NULL)
+461   {
+462     PrintTree(subTreeRoot->left, outFile);   // Print left subtree.
+463     outFile << subTreeRoot->info;
+464     PrintTree(subTreeRoot->right, outFile);  // Print right subtree.
+465   }
+466 }
+467
+468
+469
+470 ///////////////////////////////
+471 //Pretty print
+472 ///////////////////////////////
+473
+474 //Store the nodes at the depth-level of the tree (given at root)
+475 //in the vector of vals
+476 //Precondition: root!=NULL, depth >= 0
+477 template<class ItemType>
+478 void TreeType<ItemType>::getLine (TreeNode * subTreeRoot, int depth, vector<char> & vals)
+479 {
+480    assert (subTreeRoot!=NULL && depth>=0);
+481
+482    if (depth==0){ //base case
+483         vals.push_back (subTreeRoot->info);
+484    }
+485    else {       //general case ...
+486         if (subTreeRoot->left != NULL)
+487            getLine (subTreeRoot->left, depth-1, vals);
+488         else
+489         {
+490            int cnt=1;
+491            for (int i=0;i<depth-1;i++)
+492                 cnt*=2;
+493            for (int i=0;i<cnt;i++)
+494                 vals.push_back ('#');
+495         }
+496
+497         if (subTreeRoot->right!=NULL)
+498                 getLine (subTreeRoot->right, depth-1, vals);
+499         else //if (depth-1<=0)
+500         {
+501            int cnt=1;
+502            for (int i=0;i<depth-1;i++)
+503                 cnt*=2;
+504            for (int i=0;i<cnt;i++)
+505                 vals.push_back ('#');
+506         }
+507    }
+508
+509 }
+510
+511 template<class ItemType>
+512 void TreeType<ItemType>::printRow (TreeNode * p, int height, int depth)
+513 {
+514         vector<char> vec;
+515
+516         getLine(p, depth, vec);
+517
+518         cout << setw((height - depth)*2); // scale setw with depth
+519         bool toggle = true; // start with left
+520         if (vec.size() > 1) {
+521                 //for (int v : vec) {
+522                 for (int i=0; i<vec.size(); i++){
+523                         if (vec[i] != ' ') {
+524                                 if (toggle)
+525                                         cout << "/" << "   ";
+526                                 else
+527                                         cout << "\\" << "   "; //this will display
+528                         }
+529                         toggle = !toggle;
+530                 }
+531                 cout << endl;
+532                 cout << setw((height - depth)*2);
+533         }
+534         for (int i=0;i<vec.size();i++)
+535                 if (vec[i] != ' ')
+536                         cout << vec[i] << "   ";
+537         cout << endl;
+538
+539 }
+540
+541 template<class ItemType>
+542 void TreeType<ItemType>::SimplePrintRow (TreeNode * p, int height, int depth)
+543 {
+544         vector<char> vec;
+545
+546         getLine(p, depth, vec);
+547
+548         for (int i=0;i<vec.size();i++)
+549                 if (vec[i] != ' ')
+550                         cout << vec[i];
+551                 else
+552                 {
+553                         assert (false);
+554                         cout << "# " ;
+555                 }
+556         cout <<endl;
+557
+558 }
+559
+560 template<class ItemType>
+561 void TreeType<ItemType>::PrettyPrint () const
+562 {
+563    int height = GetHeightSubTree (root); //*2;
+564    for (int i=0;i<=height;i++)
+565    {
+566        printRow (root, height, i);
+567    }
+568 }
+569
+570
+571 template<class ItemType>
+572 void TreeType<ItemType>::SimplePrettyPrint () const
+573 {
+574    int height = GetHeightSubTree (root); //*2;
+575    for (int i=0;i<=height;i++)
+576    {
+577        SimplePrintRow (root, height, i);
+578    }
+579 }
+580
+581 template <class ItemType>
+582 void TreeType<ItemType>::PrintAncestors (ItemType value)
+583 {
+584         FindAncestors(root, value);
+585 }
+586
+587 template <class ItemType>
+588 void TreeType<ItemType>::FindAncestors (TreeNode* subTreeRoot, ItemType& item)
+589 {
+590
+591         char i; //EZ: should be an ItemType variable
+592         bool found;
+593         bool exist = GetItem(item, found); //EZ: Move this checking to PrintAncestors() function
+594
+595         if(exist)
+596         {
+597
+598                 if(subTreeRoot == NULL)
+599
+600                 cout << "Could not find the Item and/or Ancestors" << endl;
+601
+602                 else if(item<subTreeRoot -> info)
+603                         {
+604                                 i = subTreeRoot -> info;
+605                                 cout << i << "  ";
+606                                 FindAncestors(subTreeRoot->left, item);
+607                         }
+608                 else if(item>subTreeRoot -> info)
+609                         {
+610                                 i = subTreeRoot -> info;
+611                                 cout << i << "  ";
+612                                 FindAncestors(subTreeRoot->right, item);
+613
+614                         } else {
+615
+616                         cout << endl;
+617
+618                         }
+619         } else  {
+620
+621                         cout << "The value has not ancestors as is not in the tree." << endl;
+622
+623                         }
+624
+625
+626 }
+627
+628 template <class ItemType>
+629 void TreeType<ItemType>::isFullTree(bool& full)
+630 {
+631          isFullInSubTree(root, full);
+632 }
+633
+634 template <class ItemType>
+635 void TreeType<ItemType>::isFullInSubTree(TreeNode* subTreeRoot, bool& full)
+636 {
+637
+638         bool full1;
+639         bool full2;
+640         if(subTreeRoot -> left == NULL && subTreeRoot -> right == NULL){
+641                 full = true;
+642
+643         }else if(subTreeRoot -> left == NULL && subTreeRoot -> right != NULL) {
+644                 full = false;
+645
+646         }else if(subTreeRoot -> left != NULL && subTreeRoot -> right == NULL){
+647                 full = false;
+648
+649
+650         } else {
+651
+652                 //      full1=full;
+653                 //EZ: Just pass full1 as parameter
+654                 isFullInSubTree(subTreeRoot -> right, full);
+655                         full1=full;
+656
+657                 //EZ: Just pass full2 as parameter
+658                 isFullInSubTree(subTreeRoot -> left, full);
+659                         full2=full;
+660
+661                         //EZ: The logic below can be simplified:
+662                         //EZ: if (full1 && full2)
+663                         //      full = true;
+664                         //    else
+665                         //      full = false;
+666
+667                 if(!full1 && !full2)
+668                           full=false;
+669                 else if(full1 && full2)
+670                           full=true;
+671                 else
+672                         full=false;
+673
+674         }
+675
+676 //isFullInSubTree(subTreeRoot -> left, full);
+677 //isFullInSubTree(subTreeRoot -> right, full);
+678
+679
+680 }
+681
+682
+683
+684 ///////////////////////////////

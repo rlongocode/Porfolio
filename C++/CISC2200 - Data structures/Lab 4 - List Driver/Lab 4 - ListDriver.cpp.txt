@@ -1,0 +1,271 @@
+  1 // EZ: There are some logic errors and they are cocmmented in the code.
+  2 // EZ: Please review and understand the comments.
+  3 // EZ: 24/30
+  4 // Test driver
+  5 #include <iostream>
+  6 #include <fstream>
+  7 #include <string>
+  8 #include <cctype>
+  9 #include <cstring>
+ 10
+ 11 #include "sorted.h"
+ 12
+ 13
+ 14 using namespace std;
+ 15 void PrintList(SortedType & list);
+ 16 SortedType Union (SortedType & list1, SortedType & list2);
+ 17 SortedType Intersection (SortedType & list1, SortedType & list2);
+ 18
+ 19 int main()
+ 20 {
+ 21
+ 22   string command;        // operation to be executed
+ 23
+ 24   int number;
+ 25   Appointment appt;
+ 26   SortedType  apptBook;
+ 27   SortedType  apptBook2;
+ 28   SortedType  apptBookMix;
+ 29   bool found;
+ 30   int numCommands;
+ 31   int book;
+ 32
+ 33   cout <<"Appointment book application!\n";
+ 34
+ 35   cout <<"Enter Command: Add, Delete, Search (by date), GetLength, MakeEmpty, Print, Union, Intersection, IsSorted, Quit:\n";
+ 36   cin >> command;
+ 37
+ 38   numCommands = 0;
+ 39   while (command != "Quit")
+ 40   {
+ 41     if (command == "Add")
+ 42     {
+ 43         cout <<"Enter the number of the book you would use: (1 or 2)"<<endl;
+ 44         cin>>book;
+ 45         if(book==1)
+ 46         {
+ 47                 cout <<"Enter an appointment to be added:";
+ 48                 appt.Input();
+ 49                 apptBook.PutItem(appt);
+ 50                 appt.Output();
+ 51                 cout << " is in the book." << endl;
+ 52         }
+ 53         else if (book==2)
+ 54         {
+ 55                 cout <<"Enter an appointment to be added:";
+ 56                 appt.Input();
+ 57                 apptBook2.PutItem(appt);
+ 58                 appt.Output();
+ 59                 cout << " is in the book." << endl;
+ 60         }
+ 61         else
+ 62         {
+ 63                 cout << "That book number is not valid!" << endl;
+ 64
+ 65         }
+ 66     }
+ 67     else if (command == "Delete")
+ 68     {
+ 69           cout <<"Enter the number of the book you would use: (1 or 2)"<<endl;
+ 70           cin>>book;
+ 71           if(book==1)
+ 72           {
+ 73
+ 74                 cout <<"Enter an appointment to be deleted:";
+ 75                 appt.Input();
+ 76                 apptBook.DeleteItem(appt);
+ 77                 appt.Output();
+ 78                 cout << " is deleted from the book." << endl;
+ 79           }
+ 80           else if (book==2)
+ 81           {
+ 82                  cout <<"Enter an appointment to be deleted:";
+ 83                  appt.Input();
+ 84                  apptBook2.DeleteItem(appt);
+ 85                  appt.Output();
+ 86                  cout << " is deleted from the book." << endl;
+ 87           }
+ 88           else
+ 89           {
+ 90                   cout << "That book number is not valid!" << endl;
+ 91
+ 92           }
+ 93
+ 94     }
+ 95     else if (command == "Search")
+ 96     {
+ 97
+ 98             cout <<"Enter the number of the book you would use: (1 or 2)"<<endl;
+ 99             cin>>book;
+100             if(book==1)
+101             {
+102                 cout <<"Enter an appointment to be search:";
+103                 appt.Input();
+104                 appt = apptBook.GetItem(appt, found);
+105                 appt.Output();
+106                 if (found)
+107                         cout << " found in list." << endl;
+108                 else
+109                         cout <<  " not in list."  << endl;
+110             }
+111             else if (book==2)
+112             {
+113                 cout <<"Enter an appointment to be search:";
+114                   appt.Input();
+115                   appt = apptBook2.GetItem(appt, found);
+116                   appt.Output();
+117                   if (found)
+118                          cout << " found in list." << endl;
+119                  else
+120                          cout <<  " not in list."  << endl;
+121             }
+122             else
+123             {
+124               cout << "That book number is not valid!" << endl;
+125             }
+126     }
+127     else if (command == "GetLength")
+128     {
+129       cout << "Book 1: Length is " << apptBook.GetLength() << endl;
+130       cout << "Book 2: Length is " << apptBook2.GetLength() << endl;
+131     }
+132     else if (command == "IsFull")
+133     {
+134       if (apptBook.IsFull())
+135       cout << "Book One is full." << endl;
+136       else
+137       cout << "Book One not full."  << endl;
+138
+139       if (apptBook2.IsFull())
+140       cout << "Book Two is full." << endl;
+141       else
+142       cout << "Book Two is not full." << endl;
+143     }
+144         else if (command == "MakeEmpty")
+145          apptBook.MakeEmpty();
+146         else if (command == "Print")
+147         {
+148           cout << "Book Number One:" << endl;
+149           PrintList(apptBook);
+150           cout << "Book Number Two:" <<endl;
+151           PrintList(apptBook2);
+152         }
+153         else if (command == "Union")
+154         {
+155           cout << "Both book have been mix." <<endl;
+156           apptBookMix=Union(apptBook,apptBook2);
+157           PrintList(apptBookMix);
+158         }
+159         else if (command == "Intersection")
+160         {
+161           cout << "Common items between books have been mix." <<endl;
+162           apptBookMix=Intersection(apptBook,apptBook2);
+163           PrintList(apptBookMix);
+164         }
+165         else if ( command == "IsSorted")
+166         {
+167                 bool orden;
+168                 bool orden2;
+169                 orden = apptBook.IsSorted(appt);
+170                 orden2 = apptBook2.IsSorted(appt);
+171                 if(orden)
+172                 {
+173                         cout<<"The Book is Sorted"<<endl;
+174                 }
+175                 else if(orden2)
+176                 {
+177                         cout<<"The Book Two is Sorted"<<endl;
+178                 }
+179                 else
+180                 {
+181                         cout<<"The Books are not Sorted"<<endl;
+182                 }
+183         }
+184         else
+185           cout << command << " is not a valid command." << endl;
+186         numCommands++;
+187     cout <<  " Command number " << numCommands << " completed."
+188          << endl;
+189     cin >> command;
+190   };
+191
+192   return 0;
+193 }
+194
+195
+196 void PrintList(SortedType & list)
+197 // Pre:  list has been initialized.
+198 //       dataFile is open for writing.
+199 // Post: Each component in list has been written to dataFile.
+200 //       dataFile is still open.
+201 {
+202   int length;
+203   ItemType item;
+204
+205   list.ResetList();
+206   length = list.GetLength();
+207   for (int counter = 1; counter <= length; counter++)
+208   {
+209     item = list.GetNextItem();
+210     item.Output();
+211     cout<<endl;
+212   }
+213 }
+214
+215 SortedType Union (SortedType & list1, SortedType & list2)
+216  {
+217          // The program add all the different items in both appointments.
+218
+219          SortedType result;
+220
+221          int len1=list1.GetLength();
+222          int len2=list2.GetLength();
+223
+224          list1.ResetList();
+225
+226          for(int i=0; i<len1; i++)
+227          {
+228                  result.PutItem(list1.GetNextItem());
+229          }
+230
+231          list2.ResetList();
+232
+233          for(int i=0; i<len2; i++)
+234          {
+235                 bool found;
+236                  ItemType temp;
+237                  temp=result.GetItem(list2.GetNextItem(), found);
+238                  if(!found)
+239                   result.PutItem(temp);
+240          }
+241
+242
+243          return result;
+244
+245  }
+246
+247 SortedType Intersection (SortedType & list1, SortedType & list2)
+248  {
+249          // The program add the common items in both appointment Books.
+250
+251          SortedType result;
+252          int len1=list1.GetLength();
+253          int len2=list2.GetLength();
+254
+255          list1.ResetList();
+256          list2.ResetList();
+257
+258          for(int i=0; i<len1; i++) //EZ: should be i<len2. Think about why...
+259          {
+260                  bool found;
+261                  ItemType temp;
+262                  temp = list1.GetItem(list2.GetNextItem(),found);
+263                  if(found)
+264                  result.PutItem(temp);
+265                  else
+266                  cout<<"No Common Items"<<endl;
+267          }
+268
+269          return result;
+270  }
+271

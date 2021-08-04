@@ -1,0 +1,92 @@
+  1 // Grade: 35/50
+  2 // Points lost: (-20) You don't actually trace the code in your comments, though
+  3 // you point out a few features and demonstrate an understanding of how the
+  4 // code will operate, but I need to see each function call and return value
+  5 // to give fully credit.
+  6 // Bonus: +5
+  7 //Ricardo Longo
+  8
+  9 #include <iostream>
+ 10 #include <vector>
+ 11 using namespace std;
+ 12
+ 13 /*
+ 14  Return true if v can be expressed as sums of values from coins (repetition is allowed)
+ 15 @param coins is a vector of positive int values
+ 16 @param v is a positive int
+ 17 @return true if v can be written as a sum of values from coins, return false otherwise
+ 18  */
+ 19
+ 20 // Tracking
+ 21
+ 22 bool CoinChange(vector<int> c,int v){
+ 23
+ 24         if(v==0)                                                // The function will check if v which is 14 is equal to 0, since it isn't it will proced.
+ 25                 return true;
+ 26
+ 27         for(int i=0; i<4; i++)                                  // The fuction will now check each element in the vector with v.
+ 28         {
+ 29                 if(c[i]==v){                                    // The fuction will check if current element in vector is v.
+ 30                         //cout<<c[i]; Use to show the numbers being used to make the change.
+ 31                         return true;
+ 32                 }
+ 33                 else if(c[i]<v)                                 // The fuction will check if check if the currect element is smaller than v and will subtract the current element from v. It will resursively call the function to check with the new v recursively.
+ 34                         if (CoinChange(c,v-c[i]) == true){      // Backtracking happens here. If v equals to 14, then the fuction will find the coins 4, 4, 3, 3 which add up give the result 14
+ 35                                 //cout<<c[i]; Use to show the numbers being used to make the change.
+ 36                                 return true;
+ 37                         }
+ 38         }
+ 39         return false;                                           // If after multiple subtracts with the elements in the vector and v will never reaches zero, then it will return zero..
+ 40 }
+ 41
+ 42 void Checkreturn(vector<int> c, int v){
+ 43
+ 44         bool returnchange;
+ 45
+ 46         cout << "Coins: ";
+ 47         for(int i=0; i<4; i++)
+ 48                 cout << c[i] << " ";
+ 49         cout << endl << "Change: " << v << endl << endl;
+ 50
+ 51
+ 52         cout << "Can we return change? " << endl;
+ 53
+ 54         returnchange = CoinChange(c,v);
+ 55
+ 56         if (returnchange == false)
+ 57                 cout << "No. Cannot return change with these coins." << endl << endl;
+ 58         else
+ 59                 cout << "Yes. Can return change with these coins." << endl << endl;
+ 60 }
+ 61
+ 62 int main(){
+ 63
+ 64         vector<int> c {3,4,6,10};
+ 65         int v=14;
+ 66
+ 67         Checkreturn(c,v);
+ 68
+ 69         c[0]= 2;
+ 70         v=17;
+ 71
+ 72         Checkreturn(c,v);
+ 73
+ 74         v=34;
+ 75
+ 76         Checkreturn(c,v);
+ 77
+ 78
+ 79         return 0;
+ 80 }
+ 81
+ 82
+ 83 /*      Answers to questions:
+ 84  *
+ 85  *      a) The fuction was implemented, and tested with {2,4,6,10} and v=17 and v=34
+ 86  *
+ 87  *      b) The fuction has been tracked with v=14 and c={3,4,6,10}
+ 88  *
+ 89  *      c) To show the numbers being used to make the change, before returning true in c[i]==v and after checking that CoinChange(c, v-c[i])==true) you want a cout stament printing c[i]
+ 90  *
+ 91  *
+ 92  */

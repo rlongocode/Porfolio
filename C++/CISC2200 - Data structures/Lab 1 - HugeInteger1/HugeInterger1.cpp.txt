@@ -1,0 +1,227 @@
+  1 //EZ: Logic error in the Add function, see below test case.
+  2 //EZ: also see below for comments on style
+  3 //EZ: 16/20
+  4 /* ./a.out
+  5  Enter a number:
+  6 22222991
+  7  You Entered This:
+  8 22222991
+  9  Enter a number:
+ 10 29
+ 11  You Entered This:
+ 12 29
+ 13  The Addiction of both numbers is:
+ 14 222229120
+ 15 The First Number the user enter is not the same than the Second number!
+ 16 The First Number the user enter is greater or equal than the Second number!*/
+ 17
+ 18 #include <iostream>
+ 19 #include <cstring>
+ 20 #include "HugeInteger.h"
+ 21 void HugeInteger::input()                                                               //stores the input by user in an string and converts the char values in int in an array
+ 22 {
+ 23         string input;
+ 24         int len;
+ 25
+ 26         cin >> input;
+ 27         len = input.length();
+ 28         for(int i=0; i<len; i++)
+ 29         {
+ 30                 digits[i] = input[len-i-1]-'0';                                         //-'0' to convert the char to int
+ 31         }
+ 32
+ 33         for(int i=len; i<MAXDIGITS; i++)                                                //fill the empty slots in the array with zeros
+ 34         {
+ 35                 digits[i] = 0;
+ 36         }
+ 37 }
+ 38
+ 39 void HugeInteger::output()
+ 40 {
+ 41
+ 42         int start=0;                                                                    //displays the attay while only printing the digets need, it prevent the coumpter to print unecessary zeros thans to int start
+ 43         for(int i=MAXDIGITS-1; i>=0 ;i--)
+ 44         {
+ 45                 if(digits[i]!=0)
+ 46                 {
+ 47                         start=1;
+ 48                 }
+ 49                 if(start==1)
+ 50                 {
+ 51                         cout << digits[i] ;
+ 52                 }
+ 53         }
+ 54                 cout << endl;
+ 55
+ 56 }
+ 57
+ 58
+ 59 HugeInteger HugeInteger::Add(HugeInteger SecondOp)                                      //adds the two arrays
+ 60 {
+ 61
+ 62         HugeInteger sum;
+ 63
+ 64         int result;
+ 65
+ 66         int carry_over=0;
+ 67
+ 68         sum.digits[MAXDIGITS]; //EZ: This statement has no effect.
+ 69
+ 70
+ 71         for(int i=0; i<MAXDIGITS; i++)
+ 72         {
+ 73
+ 74                 result = digits[i] + SecondOp.digits[i];
+ 75
+ 76                 if(result >= 10)
+ 77                 {
+ 78
+ 79                         carry_over=1;
+ 80
+ 81                         sum.digits[i] = result - 10;
+ 82
+ 83                         i++; //EZ: why increase i here?
+ 84
+ 85                         sum.digits[i] = digits[i] + SecondOp.digits[i] + 1;
+ 86
+ 87                         carry_over=0; //EZ:
+ 88
+ 89
+ 90                 } else {
+ 91
+ 92                         carry_over>0; //EZ: ???
+ 93
+ 94                         sum.digits[i] = result;
+ 95
+ 96                 }
+ 97
+ 98         }
+ 99
+100         if(carry_over==1)
+101         {
+102
+103                 cout<<"Care If you add too large numbers there mind be an oveflow!" <<endl;
+104
+105         }
+106
+107 return sum;
+108
+109 }
+110
+111 //EZ: Design these functions to return a bool value, this will make them more useful..
+112 void HugeInteger::IsEqualTo(HugeInteger That)                                                           //checks if the arrays are equal
+113 {
+114         int samenumber=0;
+115
+116         for(int i=0; i<MAXDIGITS; i++)
+117         {
+118                 if(digits[i]!=That.digits[i])
+119                 samenumber=1;
+120         }
+121
+122         if(samenumber==0)
+123         {
+124
+125                 cout<<"The First Number the user enter is the same than the Second Number!"<<endl;
+126         }
+127 }
+128
+129 void HugeInteger::IsNotEqualTo(HugeInteger That)                                                        //checks if the arrays are not equal
+130 {
+131          int samenumber=0;
+132
+133          for(int i=0; i<MAXDIGITS; i++)
+134          {
+135                  if(digits[i]!=That.digits[i])
+136                  samenumber=1;
+137          }
+138
+139         if(samenumber==1)
+140          {
+141                  cout<<"The First Number the user enter is not the same than the Second number!"<<endl;
+142          }
+143         //EZ: else??
+144 }
+145
+146 void HugeInteger::IsGreaterThanorEqualTo(HugeInteger That)                                              //checks if the array is greater or equal to the other array
+147  {
+148          int greater=0;
+149          int start=0;
+150          for(int i=MAXDIGITS-1; i>=0 ;i--)
+151          {
+152                  if(digits[i]!=0 || That.digits[i]!=0)
+153                  {
+154                          start=1;
+155                  }
+156                  if(start==1)
+157                   {
+158
+159                         if(digits[i]>=That.digits[i])
+160                         greater=1;
+161
+162                         if(digits[i]<That.digits[i])
+163                         greater=0;
+164
+165                         i=0; //Better just to break, or return from here...
+166                   }
+167
+168          }
+169
+170          if(greater==1)
+171          {
+172                  cout<<"The First Number the user enter is greater or equal than the Second number!"<<endl;
+173          }
+174
+175  }
+176
+177 void HugeInteger::IsLessThanorEqualTo(HugeInteger That)                                                 //checks if the array is less or equal to the other array
+178   {
+179         int less=0;
+180         int start=0;
+181          for(int i=MAXDIGITS-1; i>=0 ;i--)
+182          {
+183                  if(digits[i]!=0 || That.digits[i]!=0)
+184                  {
+185                          start=1;
+186                  }
+187                  if(start==1)
+188                  {
+189
+190                   if(digits[i]<=That.digits[i])
+191                   less=1;
+192
+193                   if(digits[i]>That.digits[i])
+194                   less=0;
+195
+196                   i=0;
+197                  }
+198           }
+199
+200           if(less==1)
+201           {
+202                   cout<<"The First Number the user enter is less or equal than the Second number!"<<endl;
+203           }
+204   }
+205
+206 void HugeInteger::IsZero()                                                                              //checks if any of the arrays is zero
+207  {
+208
+209           int zero=0;
+210           for(int i=MAXDIGITS-1; i>=0 ;i--)
+211           {
+212                   if(digits[i]!=0)
+213                   {
+214                           zero=1;
+215                   }
+216
+217           }
+218
+219           if(zero==0)
+220           {
+221                 cout << "One of The Numbers you introduced is Zero!" << endl;
+222
+223           }
+224
+225  }
+226
+227

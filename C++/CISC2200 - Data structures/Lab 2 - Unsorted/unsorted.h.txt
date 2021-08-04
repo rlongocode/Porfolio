@@ -1,0 +1,84 @@
+  1 //EZ: The code does not compile
+  2 //EZ: Please review the solutions given in hw2
+  3 //EZ: 3/20
+  4 #include "ItemType.h"
+  5 // File ItemType.h must be provided by the user of this class.
+  6 //  ItemType.h must contain the following definitions:
+  7 //  MAX_ITEMS:     the maximum number of items on the list
+  8 //  ItemType:      the definition of the objects on the list
+  9 //  RelationType:  {LESS, GREATER, EQUAL}
+ 10 //  Member function ComparedTo(ItemType item) which returns
+ 11 //       LESS, if self "comes before" item
+ 12 //       GREATER, if self "comes after" item
+ 13 //       EQUAL, if self and item are the same
+ 14
+ 15 class UnsortedType
+ 16 {
+ 17 public:
+ 18   UnsortedType();
+ 19   // Constructor
+ 20
+ 21   void MakeEmpty();
+ 22   // Function: Returns the list to the empty state.
+ 23   // Post:  List is empty.
+ 24
+ 25   bool IsFull() const;
+ 26   // Function:  Determines whether list is full.
+ 27   // Pre:  List has been initialized.
+ 28   // Post: Function value = (list is full)
+ 29
+ 30   int GetLength() const;
+ 31   // Function: Determines the number of elements in list.
+ 32   // Pre:  List has been initialized.
+ 33   // Post: Function value = number of elements in list
+ 34
+ 35   ItemType GetItem(ItemType, bool&);
+ 36   // Function: Retrieves list element whose key matches item's key (if
+ 37   //           present).
+ 38   // Pre:  List has been initialized.
+ 39   //       Key member of item is initialized.
+ 40   // Post: If there is an element someItem whose key matches
+ 41   //       item's key, then found = true and someItem is returned.
+ 42   //     otherwise found = false and item is returned.
+ 43   //       List is unchanged.
+ 44
+ 45   void PutItem(ItemType item);
+ 46   // Function: Adds item to list.
+ 47   // Pre:  List has been initialized.
+ 48   //       List is not full.
+ 49   //       item is not in list.
+ 50   // Post: item is in list.
+ 51
+ 52   void DeleteItem(ItemType item);
+ 53   // Function: Deletes the element whose key matches item's key.
+ 54   // Pre:  List has been initialized.
+ 55   //       Key member of item is initialized.
+ 56   //       One and only one element in list has a key matching item's key.
+ 57   // Post: No element in list has a key matching item's key.
+ 58
+ 59   void ResetList();
+ 60   // Function: Initializes current position for an iteration through the list.
+ 61   // Pre:  List has been initialized.
+ 62   // Post: Current position is prior to list.
+ 63
+ 64   ItemType GetNextItem();
+ 65   // Function: Gets the next element in list.
+ 66   // Pre:  List has been initialized and has not been changed since last call.
+ 67   //       Current position is defined.
+ 68   //       Element at current position is not last in list.
+ 69   //
+ 70   // Post: Current position is updated to next position.
+ 71   //       item is a copy of element at current position.
+ 72
+ 73   //~UnsortedType();
+ 74
+ 75 private:
+ 76   int length;
+ 77   //ItemType info[MAX_ITEMS];
+ 78   //ItemType* info = new ItemType[MAX_ITEMS];
+ 79   int ItemNumber;
+ 80   ItemType* info = new ItemType[ItemNumber];
+ 81   int currentPos;
+ 82
+ 83 };
+ 84

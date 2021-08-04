@@ -1,0 +1,86 @@
+  1 //EZ: GOOD!
+  2 //EZ: 20/20
+  3 // Name: Ricardo Longo
+  4
+  5 #include<bits/stdc++.h>
+  6 #include<iostream>
+  7 using namespace std;
+  8
+  9   /* One line description about the function’s functionalities
+ 10  @return: describe what’s the return value
+ 11  @pre: pre-condition
+ 12  @post: post-condition
+ 13 */
+ 14
+ 15
+ 16
+ 17 bool areParanthesisBalanced(string expr)
+ 18 {
+ 19         // String Expr is the string that would be use to check;
+ 20     stack<char> s;
+ 21     char coin; //coin is the char use
+ 22
+ 23     for (int i=0; i<expr.length(); i++)
+ 24     {
+ 25         if (expr[i]=='('||expr[i]=='['||expr[i]=='{')
+ 26         {
+ 27             // Push the element in the stack
+ 28             s.push(expr[i]);
+ 29             continue;
+ 30         }
+ 31
+ 32         if (s.empty())
+ 33            return false;
+ 34
+ 35         switch (expr[i])
+ 36         {
+ 37         case ')':
+ 38
+ 39             coin = s.top();
+ 40             s.pop();
+ 41             if (coin=='{' || coin=='[')
+ 42                 return false;
+ 43             break;
+ 44
+ 45         case '}':
+ 46
+ 47             coin = s.top();
+ 48             s.pop();
+ 49             if (coin=='(' || coin=='[')
+ 50                 return false;
+ 51             break;
+ 52
+ 53         case ']':
+ 54
+ 55             coin = s.top();
+ 56             s.pop();
+ 57             if (coin =='(' || coin == '{')
+ 58                 return false;
+ 59             break;
+ 60         }
+ 61     }
+ 62
+ 63     return (s.empty());
+ 64 }
+ 65
+ 66 int main()
+ 67 {
+ 68     string user;
+ 69     //string expr = "{()}[]";
+ 70     int repeat = 1;
+ 71         while(repeat==1)
+ 72         {
+ 73         cout<<"Enter the parathesis you want to check for balance:"<<endl<< " example: {()}[] "<<endl;
+ 74         cin>>user;
+ 75
+ 76     if (areParanthesisBalanced(user))
+ 77         cout << "Balanced" << endl;
+ 78     else
+ 79         cout << "Not Balanced" << endl;
+ 80
+ 81         cout<<"Do you want to do another check? Yes = 1, No = 0"<<endl;
+ 82         cin>>repeat;
+ 83
+ 84         }
+ 85     return 0;
+ 86 }

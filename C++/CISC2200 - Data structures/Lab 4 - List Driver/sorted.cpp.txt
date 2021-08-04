@@ -1,0 +1,283 @@
+ 1 // Implementation file for sorted.h
+  2
+  3 #include "sorted.h"
+  4
+  5 /**************************************************
+  6  *Constructor: initialized in-object variable
+  7               also: allocate out-object memory (the dynamic array)
+  8 ****************************************************/
+  9
+ 10 SortedType::SortedType()
+ 11 {
+ 12   size = DEF_SIZE;
+ 13   info = new ItemType[size];
+ 14   length = 0;
+ 15 }
+ 16
+ 17 SortedType::SortedType(int size)
+ 18 {
+ 19   this->size = size;
+ 20   info = new ItemType[size];
+ 21   length = 0;
+ 22 }
+ 23
+ 24
+ 25 /**************************************************
+ 26  *Copy Contructor: Use for Assigment Operator
+ 27 **************************************************/
+ 28
+ 29
+ 30 SortedType & SortedType::operator= (const SortedType & other)
+ 31 {
+ 32         if (this==&other)
+ 33         return *this;
+ 34
+ 35         else
+ 36         {
+ 37                 //If not same size
+ 38                 if (size!=other.size){
+ 39                         if (info!=NULL)
+ 40                                 delete [] info;
+ 41                         size = other.size;
+ 42                         info = new ItemType[size];
+ 43                 }
+ 44
+ 45                 //Copies Info
+ 46                 for (int i=0;i<other.length;i++)
+ 47                 {
+ 48                         info[i] = other.info[i];
+ 49                 }
+ 50                 length = other.length;
+ 51                 return *this;
+ 52
+ 53         }
+ 54 }
+ 55 SortedType::SortedType(const SortedType & other) // copy Constructor
+ 56 {
+ 57         info = NULL;
+ 58         size = 0;
+ 59         (*this) = other; //Copies the first node
+ 60 }
+ 61
+ 62
+ 63 /**************************************************
+ 64  *Destructure: the object itself's memory will be deallocated automatically
+ 65         out-object memory (the dynamic array) needs to be manually deleted
+ 66 **********************************************/
+ 67
+ 68 SortedType::~SortedType()
+ 69 {
+ 70    delete [] info;
+ 71 }
+ 72
+ 73
+ 74 bool SortedType::IsFull() const
+ 75 {
+ 76   return (length == size);
+ 77 }
+ 78
+ 79
+ 80 int SortedType::GetLength() const
+ 81 {
+ 82   return length;
+ 83 }
+ 84
+ 85
+ 86 //a helper function to be used by GetItem
+ 87 //search for item in a[left...right]
+ 88 //if it's found, return the index
+ 89 //else return -1
+ 90
+ 91 int SortedType::BinarySearch (ItemType info[ ], int left, int right, ItemType item)
+ 92 {
+ 93         if (right >= left) {
+ 94         int mid = left + right / 2;  //EZ: should be (left+right)/2
+ 95
+ 96         // If the element is present at the middle
+ 97         // itself
+ 98         if (info[mid].ComparedTo(item) == EQUAL)
+ 99             return mid;
+100
+101         // If element is smaller than mid, then
+102         // it can only be present in left subarray
+103         if (info[mid].ComparedTo(item) == GREATER)
+104                 return BinarySearch(info, left, mid - 1, item);
+105
+106         // Else the element can only be present
+107         // in right subarray
+108         return BinarySearch(info, mid + 1, right, item);
+109     }
+110
+111     // We reach here when element is not
+112     // present in array
+113     return -1;
+114 }
+115
+116 ItemType SortedType::GetItem(ItemType item, bool& found)
+117 // Pre:  Key member(s) of item is initialized.
+118 //       list is sorted in ascending order
+119 // Post: If found, item's key matches an element's key in the
+120 //       list and a copy of that element has been returned;
+121 //       otherwise, item is returned.
+122 {
+123         //Todo: make use of BinarySearch function here
+124
+125         int start = 0;
+126         int end = length-1;
+127         int location = 0;
+128
+129         location = BinarySearch(info, start, end, item);
+130 //EZ: BinarySearch already would tell us where item is located ...
+131 //EZ: No need to have the while loop below.
+132         bool moreToSearch;
+133
+134   found = false;
+135
+136   moreToSearch = (location < length);
+137
+138   while (moreToSearch && !found)
+139   {
+140     switch (item.ComparedTo(info[location]))
+141     {
+142       case LESS    :
+143       case GREATER : location++;
+144                      moreToSearch = (location < length);
+145                      break;
+146       case EQUAL   : found = true;
+147                      item = info[location];
+148                      break;
+149     }
+150   }
+151
+152   return item;
+153 }
+154
+155
+156 void SortedType::MakeEmpty()
+157 // Post: list is empty.
+158 {
+159   length = 0;
+160 }
+161
+162
+163
+164 void SortedType::PutItem(ItemType item)
+165 // pre: the list is sorted
+166 // Post: item is in the list. list is sorted
+167 {
+168   //1. determine the index for item in info array
+169
+170          bool  moreToSearch;
+171          int   location = 0;
+172
+173          // find proper location for new element
+174
+175          moreToSearch = ( location < length );
+176
+177          while ( moreToSearch  )
+178          {
+179                 switch ( item.ComparedTo( info[location] ) )
+180                 {
+181                         case   LESS   : moreToSearch = false;
+182                         break;
+183
+184                         case  GREATER : location++;
+185                         moreToSearch = ( location < length );
+186                         break;
+187                 }
+188          }
+189
+190   //2. if length==size,  grow the array size
+191   //                     copy elements beofre item into new array
+192   //                     store item into the index
+193   //                     copy remaining elements into new array
+194   //                     increase length
+195
+196         if(length == size)
+197         {
+198                 size = size*2;
+199                 infoB = new ItemType[size];
+200
+201                 for(int i=0;i<location;i++)
+202                 {
+203                         infoB[i]=info[i];
+204                 }
+205
+206                 infoB[location]=item;
+207
+208                 //EZ: info[location] is not copied over
+209                 for(int i=location+1; i<length; i++)
+210                 {
+211                         infoB[i+1]=info[i];
+212                 }
+213
+214                         delete[] info;
+215                         //info=infoB;   //EZ: need this line too!
+216
+217                 length++;
+218         }
+219
+220          else{
+221   //       follow the code we studied in class
+222         for  (int index=length; index>location; index--)
+223                 info [ index ] = info [ index - 1 ];
+224
+225         info [ location ] = item;
+226         length++;
+227         }
+228 }
+229
+230
+231 void SortedType::DeleteItem(ItemType item)
+232 // Pre:  item's key has been initialized.
+233 //       An element in the list has a key that matches item's.
+234 //       list is sorted
+235 // Post: No element in the list has a key that matches item's.
+236 //        list is sorted
+237 {
+238         //TODO by you
+239         int start = 0;
+240         int end = length-1;
+241         int location = 0;
+242
+243         location = BinarySearch(info, start, end, item);
+244
+245         for(int index=location+1; index<length; index++)
+246         info[index-1] = info[index];
+247
+248         length--;
+249
+250
+251 }
+252
+253
+254 void SortedType::ResetList()
+255 // Post: currentPos has been initialized.
+256 {
+257   currentPos = -1;
+258 }
+259
+260 bool SortedType::IsSorted(ItemType item)
+261 {
+262         bool orden = true;
+263
+264         for(int i=0; i<length - 1; i++)
+265         {
+266                 if (info[i].ComparedTo(info[i+1]) == GREATER)
+267                 orden=false;
+268         }
+269
+270         return orden;
+271 }
+272
+273 ItemType SortedType::GetNextItem()
+274 // Pre:  ResetList was called to initialized iteration.
+275 //       No transformer has been executed since last call.
+276 //       currentPos is defined.
+277 // Post: item is current item.
+278 //       Current position has been updated.
+279 {
+280   currentPos++;
+281   return info[currentPos];
+282 }
+283

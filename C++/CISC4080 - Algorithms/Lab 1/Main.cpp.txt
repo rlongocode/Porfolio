@@ -1,0 +1,342 @@
+  1 /*
+  2  * Name: Ricardo Longo
+  3  * Program: Lab1
+  4  * The following program presents different ways to sort a vector with each way's respective recursive sorting: Selection Sorting, Bubble Sorting, Insertion Sorting.
+  5
+  6 */
+  7
+  8 // Grade: 85/100
+  9 // Nice comments.
+ 10 // See notes in selection sort, smaller number, bubble sort, recursive bubble sort,
+ 11 // insertion sort and recursive insertion sort
+ 12
+ 13 #include <iostream>
+ 14 #include <vector>
+ 15
+ 16 using namespace std;
+ 17
+ 18
+ 19 /* Generate and return an vector and fill it with random
+ 20    integers between 1 and 100
+ 21  * @param size: the size of the array to be generated
+ 22  * returns a randomly generated vector.
+ 23  */
+ 24
+ 25 vector<int> GenerateRandomVector(int size){
+ 26
+ 27         vector<int> list; //an empty vector
+ 28         int value;
+ 29
+ 30         for (int i=0;i<size;i++){
+ 31
+ 32                 value=rand()%100+1;
+ 33                 list.push_back(value);
+ 34
+ 35         }
+ 36
+ 37         return list;
+ 38 }
+ 39
+ 40
+ 41 /* Displays the content of the vector
+ 42  * @param: A vector to read
+ 43  * Displays the values inside the vector
+ 44  */
+ 45 void PrintVector (const vector<int> & intList){
+ 46
+ 47         int right=intList.size(); // Right is the end of the array
+ 48
+ 49         for (int i=0; i<right; i++)
+ 50
+ 51                 cout<<intList[i]<<" ";
+ 52
+ 53         cout<<endl;
+ 54
+ 55 }
+ 56
+ 57 // No need to declare swap function - there's one built into vector
+ 58 // May lose points in the future
+ 59  /* Swap Fuction
+ 60   * @param: Two pointers of variables to be swapped by the program.
+ 61   * @pre: Two elements to exchange values with each other.
+ 62   * @post: The value of the element in pointer a would be swapped with the value of the element in pointer b
+ 63   */
+ 64 void swap (int& a, int& b){
+ 65
+ 66         int c=a; //an extra variable C to do the swap
+ 67         a=b;
+ 68         b=c;
+ 69
+ 70 }
+ 71
+ 72
+ 73 /* Sorts a Vector by Selection Sort
+ 74  * @param list: A list to be sorted by the program
+ 75  * @pre: list has been initialized with element in random order.
+ 76  * @post: Elements would be rearrange by selecting the smaller number and swapping it with the proper position to make an ascending list.
+ 77  */
+ 78
+ 79 void SelectionSort(vector<int> & intList){
+ 80
+ 81         int right=intList.size();
+ 82
+ 83         // Runs loop an extra time (can go to intList.size() - 1 and the list will still be sorted (-1)
+ 84         for(int left=0; left<right; left++){
+ 85
+ 86                 int smaller=left;  // Location of the smaller element in the vector and left is the start of the array
+ 87
+ 88                 // Runs loop an extra time (start at left + 1, no need to compare element to itself) (-1)
+ 89                 // If you start i at left + 1 you can see why the inner loop only goes to size - 1, left + 1
+ 90                 // would already be greater than right on the last pass of the loop.
+ 91                 for(int i=left; i<right; i++){
+ 92
+ 93                         if(intList[i]<intList[smaller]){
+ 94                                 smaller=i;
+ 95                         }
+ 96                 }
+ 97
+ 98                 if(smaller!=left){
+ 99
+100                         swap(intList[left],intList[smaller]);
+101
+102                 }
+103
+104         }
+105 }
+106
+107  /* Finds the SmallerNumber in the Vector for the Recursive Selection Sort Function
+108   * @param: A vector, the minimun being the start of the list of elements in the vector, maximum being the end of the list of elements in the vector, Smaller being the smallest value on the vector
+109   * Scans the vector for smallest element value. Returns the smaller number in the vector
+110   */
+111
+112 int SmallerNumber(const vector<int> & intList, int left, int right, int smaller){
+113
+114         // Same problem here - left and smaller start out equal - makes an unncessary comparison (-1)
+115         for(int i=left; i<right; i++){
+116
+117                 if(intList[i]<intList[smaller]){
+118
+119                         smaller=i;
+120
+121                 }
+122
+123         }
+124
+125         return smaller;
+126
+127 }
+128
+129  /* Sorts a Vector by Recursive Selection Sort
+130   * @param: A Vector and the start of the vector list to selection sort recursively
+131   * Elements would be rearrange by selecting the smaller number and swapping it with the proper position to make an ascending list.
+132   */
+133
+134 void RecursiveSelectionSort(vector<int> & intList, int left){
+135
+136         int right=intList.size();
+137         int smaller=left;
+138
+139         if(right==left){
+140
+141                 return;
+142
+143         }
+144
+145         else{
+146
+147                 int S=SmallerNumber(intList, left, right, smaller); // Location of Smaller Element in the vector foudn with SmallerNumber
+148
+149                 if(S!=left)
+150
+151                         swap(intList[S],intList[left]);
+152
+153                 RecursiveSelectionSort(intList,left+1);
+154         }
+155 }
+156
+157  /* Sorts a Vector by Bubble Sort
+158   * @param: A Vector to bubble sort
+159   * A vector that would be sorted in ascending order by swapping elements with a near one if any of two elements is in the wrong position.
+160   */
+161
+162 void BubbleSort (vector<int> & intList){
+163
+164         int right=intList.size();
+165         bool repeat=false;         // Indicator to determine if there's elements that need sorting
+166
+167         // This method works for bubble sort and it is beneficial to keep track of whether or not
+168         // swaps are occuring, however, it is innefficient in that it runs the inner loop more times
+169         // than it needs to if the list is not already sorted. Because the end of the list becomes sorted
+170         // as it goes on with new values bubbling up to the end, there's no need to keep comparing elements
+171         // at the end of the list. It would be better to nest a second for loop that would only go through
+172         // the part of the list that is unsorted (-2)
+173         do{
+174
+175                 repeat=false;
+176
+177
+178                 for(int left=0; left<right-1; left++){
+179
+180                         if(intList[left]>intList[left+1]){
+181
+182                                 swap(intList[left],intList[left+1]);
+183
+184                                 repeat=true;
+185                         }
+186                 }
+187
+188         }while(repeat==true);
+189
+190 }
+191
+192 /* Sorts a Vector by Recursive Bubble Sort
+193  * @param: A vector, the start of the list, and a second variable to help repeat the program until all elements are arrange in ascending order.
+194  * The vector would be sorted by Recursive bubble sort, swaping near elements in the wrong position to obtain an asceding ordened list.
+195  */
+196
+197 void RecursiveBubbleSort(vector<int> & intList, int left, int repeat){
+198
+199         int right=intList.size();
+200
+201         // This method will also run more times than it needs to, checking the already
+202         // sorted end of the list because of the condition left >= right. It would
+203         // be better to take into account the number of times the loop has already ran. (-2)
+204         if (left>=right-1){
+205
+206                 repeat++;       //Repeat is a variable used to make sure to repeat the code as many steps as necessary to sort the array properly
+207                 left=0;
+208
+209         }
+210
+211         if (repeat>=right-1)
+212
+213                 return;
+214
+215         else{
+216
+217                 if(intList[left]>intList[left+1])
+218
+219                         swap(intList[left], intList[left+1]);
+220
+221                 RecursiveBubbleSort(intList, left+1, repeat);
+222
+223         }
+224 }
+225
+226
+227 /* Sorts a Vector by Insertion Sort
+228  * @param: A vector to organize by Insertion sort
+229  *  The Vector would be sorted by starting from the left, determining if the element is in the wrong position, and swaping them by inserting the elements in their proper location
+230  */
+231 // This is not an insertion sort - it's more similar to a bubble sort. Insertion sort involves
+232 // moving smaller elements to the front of list and moving everything after them down, which
+233 // is not acomplished here. (-4)
+234 void InsertionSort (vector<int> & intList){
+235
+236         int right=intList.size();
+237         int insert;                     //Variable that would be use to insert the element in their proper location.
+238
+239         for(int left=1; left<right; left++){
+240
+241                 insert=left;
+242
+243                 while(insert>0 && intList[insert]<intList[insert-1]){
+244
+245                         swap(intList[insert], intList[insert-1]);
+246
+247                         insert=insert - 1;
+248
+249                         }
+250         }
+251 }
+252
+253 /* Sorts a Vector by Recursive Insertion Sort
+254  * @param: A vector, and the start of the vector
+255  *  The Vector would be sorted recursively by inserting elements in their correspoding location.
+256  * */
+257 // Again this is not an insertion sort. Elements aren't shifted (-4)
+258 void RecursiveInsertionSort (vector<int> & intList, int left){
+259
+260         int right=intList.size();
+261         int insert=left;
+262
+263         if(left>=right)
+264
+265                 return;
+266
+267         else{
+268
+269                 while(insert>0 && intList[insert]<intList[insert-1]){
+270
+271                         swap(intList[insert], intList[insert-1]);
+272                         insert=insert - 1;
+273                 }
+274
+275                 RecursiveInsertionSort(intList, left+1);
+276         }
+277
+278 }
+279
+280 int main (){
+281
+282         // Variables Declarection
+283         int min=0;
+284         int second=0;
+285         vector<int> intVector = GenerateRandomVector (5);
+286         srand (time(NULL));
+287
+288         // Selection Sort
+289         cout << endl << "Before Selection Sort Vector:"<<endl;
+290         PrintVector(intVector);
+291         cout << endl << "After Selection Sort Vector:"<<endl;
+292         SelectionSort(intVector);
+293         PrintVector(intVector);
+294
+295         // Recursive Selection Sort
+296         cout << endl << "Before Recursive Selection Sort Vector:"<<endl;
+297         intVector = GenerateRandomVector (5);
+298         PrintVector(intVector);
+299         cout << endl << "After Recursive Selection Sort Vector:"<<endl;
+300         RecursiveSelectionSort(intVector,min);
+301         PrintVector(intVector);
+302
+303 // ---------------------------------------------------------------------------
+304
+305         //Bubble Sort
+306         cout<< endl <<"Before Bubble Sort Vector:"<<endl;
+307         intVector = GenerateRandomVector (5);
+308         PrintVector(intVector);
+309         cout<< endl <<"After Bubble Sort Vector:"<<endl;
+310         BubbleSort(intVector);
+311         PrintVector(intVector);
+312
+313         // Recursive Bubble Sort
+314         cout<< endl <<"Before Recursive Bubble Sort Vector:"<<endl;
+315         intVector = GenerateRandomVector (5);
+316         PrintVector(intVector);
+317         cout<< endl <<"After Recursive Bubble Sort Vector:"<<endl;
+318         RecursiveBubbleSort(intVector, min, second);
+319         PrintVector(intVector);
+320
+321 // --------------------------------------------------------------------------
+322
+323         //Insertion Sort
+324         cout<< endl <<"Before Inserction Sort Vector:"<<endl;
+325         intVector = GenerateRandomVector (5);
+326         PrintVector(intVector);
+327         cout<< endl <<"Afte Inserction Sort Vector:"<<endl;
+328         InsertionSort(intVector);
+329         PrintVector(intVector);
+330
+331         //RecursiveInserction Sort
+332         cout<< endl <<"Before Recursive Inserction Sort Vector:"<<endl;
+333         intVector = GenerateRandomVector (5);
+334         PrintVector(intVector);
+335         cout<< endl <<"Afte Recursive Inserction Sort Vector:"<<endl;
+336         RecursiveInsertionSort(intVector,min);
+337         PrintVector(intVector);
+338
+339
+340         cout << endl;
+341 }
+342

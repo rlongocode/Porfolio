@@ -1,0 +1,140 @@
+  1 // EZ: Excellent. See one minor comment below
+  2 // EZ: 100/100
+  3 // Coder: Ricardo Longo
+  4 // Team: Destin Piagentini
+  5
+  6 #include <iostream>
+  7 #include <stack>
+  8 using namespace std;
+  9
+ 10 bool CoinChange (int c[], int n, int v, int result[]);
+ 11
+ 12 //TopLevel Approach
+ 13 /*Precondition: An array of integers C is initialised with a size of n.
+ 14  *Postcondition: An array will be return with elements store 0s(false) or 1s(true) depending on if result[v] an be calculated.
+ 15  *We then call CoinChange on this array and the high level variables and we return with the overall result.
+ 16  */
+ 17 bool CoinChangeTopLevel (int c[], int n, int v)
+ 18 {
+ 19         //Allocate an array
+ 20         int* result;
+ 21         result = new int[v+1];  //result[j] stores 1 if we can make a change of j using the coins; otherwise, it stores 0
+ 22         //stores -1, if the subproblem has not been solved before
+ 23
+ 24         for (int i=0;i<=v;i++)
+ 25                 result[i] = -1;
+ 26
+ 27         return CoinChange (c, n, v, result);
+ 28
+ 29 }
+ 30
+ 31 //Return true if we can make value v using coins in array c; return false otherwise
+ 32
+ 33 /*Precondition: An array of integers of size N.
+ 34  *Postcondition: Result of v is checked against existing values, and, if not existing, recursively calculated and stored. Returns the result.
+ 35  *Variable Explanation: C The array of coin values
+ 36  *                      N The lenght of the array
+ 37  *                      V The value that we wanna obtain adding coins
+ 38  *                      Result the array of where a value can be use to obtain the v value. -1=no determined, 0=false, 1=true
+ 39  */
+ 40 bool CoinChange (int c[], int n, int v, int result[])
+ 41 {
+ 42
+ 43         //Check if the problem was solved at ready
+ 44         if (result[v]!=-1){
+ 45                 return result[v]; //1 => true; 0 => false;
+ 46         }
+ 47         //The value is 0, then return true
+ 48         if (v==0){
+ 49                 result[0] = 1;
+ 50                 return true;
+ 51         }
+ 52
+ 53         //General case: try to give a change of v, by considering include c[i]
+ 54         for (int i=0;i<n;i++)
+ 55         {
+ 56                 //if equals the value then return true
+ 57                 if (c[i]==v) {
+ 58                         result[v]=1;
+ 59                         return true;
+ 60                 }
+ 61                 //subtract the coins if the number is too big
+ 62                 else if (c[i]<v)
+ 63                         if (CoinChange (c, n, v-c[i], result))
+ 64                         {
+ 65                                  result[v] = 1;
+ 66                                  return true;
+ 67                         }
+ 68         }
+ 69
+ 70         result[v] = 0;
+ 71         return false;
+ 72 }
+ 73
+ 74
+ 75 //Bottom-up: tabulation approach
+ 76 //Return true if we can make value v using coins in array c; return false otherwise
+ 77
+ 78 /*Precondition: A Array with coin of size N that will be use to determine value V.
+ 79  *Postcondition: The function will return True if the array of coins can be use to give a total of value V.
+ 80  *Variable Explanation: Result array can be use to determine which values can be form with the coins.
+ 81  *                      Variable Temp is use to store k - c[i] to determine if a previous value plus one of the coins can be use to make the current value being check.
+ 82  *                      Bool Check is use to determine if the current value can be use to obtain V, if the current value can be use, check will be true, otherwise will be false and will set the current result[v] as false.*/
+ 83
+ 84 bool CoinChangeBottomUp (int c[], int n, int v)
+ 85 {
+ 86         bool* result;
+ 87         result = new bool[v+1]; //result[v] will be solution to CoinChange (v)
+ 88
+ 89         result[0] = true;
+ 90
+ 91         int temp = 0;
+ 92         bool check = false; //EZ: could just use result[k] for it .
+ 93
+ 94         for (int k=0;k<=v;k++){
+ 95         //We will check if we can make K with the current coins, starting from zero and checking each instance.
+ 96                  check = false;
+ 97                  for (int i=0; i<n;i++){
+ 98                          if (c[i]==v) {
+ 99                                  result[k]=true;
+100                                  check = true;
+101                          }
+102                          else if (c[i]<k) {
+103                                  //If any element minus the change coins can be returned then the current value can be returned with the current coins.
+104                                  temp = k - c[i];
+105                                  if(result[temp]==true){
+106                                          result[k]=true;
+107                                          check = true;
+108                                  }
+109                          }
+110
+111                  }
+112         if(check == false)
+113                 result[k]= false;       // If the about If Statements do not trigger, then set the current number as false as it cannot be make with the coins.
+114       }
+115          return result[v];
+116  }
+117
+118  int main()
+119  {
+120          int c[4]={10,4,6,2};
+121          int value; //value=17?
+122
+123          cout <<"Enter a value:";
+124          cin >> value;
+125
+126          cout <<"TopLevel Coin Change: "<< endl;
+127          if (CoinChangeTopLevel (c, 4, value))
+128                 cout <<"We can make the change of "<<value<<endl;
+129          else
+130                 cout <<"We cannot make the change of "<<value<<endl;
+131
+132          cout <<"Bottomup Coin Change: "<< endl;
+133          if (CoinChangeBottomUp (c, 4, value))
+134                 cout <<"We can make the change of "<<value<<endl;
+135          else
+136                 cout <<"We cannot make the change of "<<value<<endl;
+137
+138          return 0;
+139 }
+140
