@@ -1,0 +1,212 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ *
+ * 
+ */
+package assignment22;
+
+import java.util.Vector;
+
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.border.EmptyBorder;
+
+public class assignment22 extends JFrame implements ActionListener {
+    private SummableSet set;
+    private JButton insert;
+    private JButton delete;
+    private JButton search;
+    private JButton clear;
+    private JButton sum;
+    private JPanel panel;
+    private JTextArea display;
+
+public assignment22() {
+    this.set = new SummableSet();
+    this.panel = new JPanel();
+    this.display = new JTextArea(20, 20);
+    this.display.setEditable(false);
+    this.insert = new JButton("insert element");
+    this.delete = new JButton("remove element");
+    this.search = new JButton("search for element");
+    this.clear = new JButton("empty set");
+    this.sum = new JButton("sum all elements");
+    this.insert.addActionListener(this);
+    this.delete.addActionListener(this);
+    this.search.addActionListener(this);
+    this.clear.addActionListener(this);
+    this.sum.addActionListener(this);
+
+    add(new JScrollPane(this.display), "Center");
+    
+    this.panel.add(this.insert);
+    this.panel.add(this.delete);
+    this.panel.add(this.search);
+    this.panel.add(this.clear);
+    this.panel.add(this.sum);
+    add(this.panel, "North");
+    setSize(800,600);
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    setVisible(true);
+  }
+
+public void actionPerformed(ActionEvent event) {
+    if (event.getSource() == this.insert) {
+      comcheck("insert");
+    } 
+    
+    else if (event.getSource() == this.delete) {
+      comcheck("delete");
+    } 
+    
+    else if (event.getSource() == this.search) {
+      comcheck("search");
+    } 
+    
+    else if (event.getSource() == this.sum) {
+      JOptionPane.showMessageDialog(this, "Sum = " + this.set.getSum(), "Sum of all elements result", JOptionPane.INFORMATION_MESSAGE);
+    } 
+    
+    else if (event.getSource() == this.clear) {
+      this.display.setText("");
+      try {
+        this.set.clear();
+      } 
+      
+      catch (Exception exception) {}
+    } 
+  }
+
+private void comcheck(String instruction) {
+    if (instruction.equals("delete") || instruction.equals("search")){
+      if (this.set.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "The set is empty.", "Empty Set Error", JOptionPane.INFORMATION_MESSAGE);
+        return;
+      }
+}
+    String input = JOptionPane.showInputDialog(this, "Enter a number: ", "Number Entry Window", JOptionPane.INFORMATION_MESSAGE);
+    if (input == null)
+      return; 
+    try {
+      int num = Integer.parseInt(input);
+      if (instruction.equalsIgnoreCase("insert")) {
+        this.set.insert(num);
+        this.display.setText(this.set.toString());
+      } else if (instruction.equalsIgnoreCase("delete")) {
+        if (!this.set.delete(num)) {
+          JOptionPane.showMessageDialog(this, num + " was not found.", "Number Not Found Error", JOptionPane.INFORMATION_MESSAGE);
+          return;
+        } 
+        this.display.setText(this.set.toString());
+      } 
+      else if (instruction.equalsIgnoreCase("search")) {
+        boolean found = this.set.search(num);
+        String output = "";
+        if (found) {
+          output = num + " was found.\n";
+        } 
+        else {
+          output = num + " was not found.\n";
+        } 
+        this.display.setText(this.set.toString());
+        JOptionPane.showMessageDialog(this, output);
+      } 
+    } 
+    catch (NumberFormatException ex) {
+      JOptionPane.showMessageDialog(this, "please enter a number", "Not A Number Error", JOptionPane.INFORMATION_MESSAGE);
+    } 
+    catch (Exception ex) {
+      JOptionPane.showMessageDialog(this, "This is an empty set.", "Empty Set Error", JOptionPane.INFORMATION_MESSAGE);
+    } 
+  }
+  
+ private class IntSet {
+    public Vector<Integer> vec = new Vector<>();
+    
+    private IntSet() {}
+    
+    public void insert(int no) {
+      vec.addElement(no);
+    }
+    
+    public boolean delete(int no) throws Exception {
+      if (!search(no))
+        return false; 
+      vec.removeElement(no);
+      return true;
+    }
+    
+    public boolean search(int no) {
+      for(int i = 0; i < vec.size(); i++){
+          if(vec.get(i) == no)
+              return true;
+      }
+      
+      return false;
+    }
+    
+    public int getSize() {
+      return vec.size();
+    }
+    
+    public boolean isEmpty() {
+      return (vec.isEmpty());
+    }
+    
+    public void clear() throws Exception {
+      vec.removeAllElements();
+    }
+    
+    public String toString() {
+        return vec.toString();
+    }    
+   
+  }
+ 
+private class SummableSet extends IntSet {
+    
+    private int sum;
+    
+    private SummableSet() {
+      this.sum = 0;
+    }
+    
+    public int getSum() {
+      this.sum = 0;
+      getSum(vec);
+      return this.sum;
+    }
+    
+    private void getSum(Vector<Integer> vec) {
+      int numb;
+      if (vec.isEmpty())
+        return; 
+      for(int i = 0; i < vec.size(); i++){
+          numb = vec.get(i);
+          this.sum += numb;
+      }
+      
+    }
+  }
+ 
+public static void main(String[] args) {
+        assignment22 ins = new assignment22();
+    }
+    
+}
